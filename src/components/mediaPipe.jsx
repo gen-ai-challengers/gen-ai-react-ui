@@ -3,6 +3,8 @@ import React, { useRef, useEffect } from "react";
 import * as Facemesh from "@mediapipe/face_mesh";
 import * as cam from "@mediapipe/camera_utils";
 import Webcam from "react-webcam";
+import { FaceDetection } from '@mediapipe/face_detection';
+
 function MediaPipe() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -28,7 +30,7 @@ function MediaPipe() {
       canvasElement.width,
       canvasElement.height
     );
-    
+
     if (results.multiFaceLandmarks) {
       for (const landmarks of results.multiFaceLandmarks) {
         connect(canvasCtx, landmarks, Facemesh.FACEMESH_TESSELATION, {
@@ -54,16 +56,19 @@ function MediaPipe() {
           color: "#E0E0E0",
         });
       }
-      if(results.multiFaceLandmarks.length>0){
-        console.log('Face detected',results)
-      }
+      // if (results.multiFaceLandmarks.length > 0) {
+      //   console.log('Face detected', results)
+      // }
     }
     canvasCtx.restore();
   }
   // }
 
-  // setInterval(())
+  const handleFaceDetection = (results) => {
+    // setFacesDetected(results.multiFaceLandmarks.map((landmarks) => landmarks.boundingBox));
+  };
   useEffect(() => {
+    //MESH===================================
     const faceMesh = new FaceMesh({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
@@ -77,7 +82,16 @@ function MediaPipe() {
     });
 
     faceMesh.onResults(onResults);
+   //====================
+   // FACE DETECT
+   const faceDetection = new FaceDetection({ locateFile: (file) => {
+    console.log(file)
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+  }});
 
+  // Cleanup function to release resources
+
+   //====================0
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null
@@ -85,6 +99,8 @@ function MediaPipe() {
       camera = new cam.Camera(webcamRef.current.video, {
         onFrame: async () => {
           await faceMesh.send({ image: webcamRef.current.video });
+          await faceDetection.send({ image: webcamRef});
+          console.log(typeof webcamRef.current.video)
         },
         width: 640,
         height: 480,

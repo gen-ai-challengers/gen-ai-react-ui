@@ -1,0 +1,64 @@
+.loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .face {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #000;
+    border-radius: 50%;
+    position: relative;
+    animation: blink 2s infinite alternate;
+  }
+  
+  .eye {
+    width: 20px;
+    height: 20px;
+    background-color: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 30%;
+  }
+  
+  .left {
+    left: 20%;
+  }
+  
+  .right {
+    right: 20%;
+  }
+  
+  .mouth {
+    width: 40px;
+    height: 10px;
+    background-color: transparent;
+    border: 2px solid #000;
+    position: absolute;
+    bottom: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+    animation: mouth-move 2s infinite alternate;
+  }
+  
+  @keyframes blink {
+    0%, 100% {
+      height: 20px;
+    }
+    50% {
+      height: 5px;
+    }
+  }
+  
+  @keyframes mouth-move {
+    0%, 100% {
+      height: 10px;
+    }
+    50% {
+      height: 15px;
+    }
+  }
+  
