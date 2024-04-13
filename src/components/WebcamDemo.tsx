@@ -2,6 +2,7 @@ import Webcam from 'react-webcam';
 import { CameraOptions, useFaceDetection } from 'react-use-face-detection';
 import FaceDetection from '@mediapipe/face_detection';
 import { Camera } from '@mediapipe/camera_utils';
+import { useRef } from 'react';
 
 const width = 500;
 const height = 500;
@@ -12,7 +13,7 @@ const WebcamDemo = (): JSX.Element => {
       model: 'short',
     },
     faceDetection: new FaceDetection.FaceDetection({
-      locateFile: (file) => ``,
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
     }),
     camera: ({ mediaSrc, onFrame }: CameraOptions) =>
       new Camera(mediaSrc, {
@@ -21,7 +22,6 @@ const WebcamDemo = (): JSX.Element => {
         height,
       }),
   });
-
   return (
     <div>
       <p>{`Loading: ${isLoading}`}</p>
