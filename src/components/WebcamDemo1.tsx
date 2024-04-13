@@ -8,11 +8,15 @@ import { sendToDetectionEndpoint } from './shared/services/faceService';
 import { FaceMesh } from '@mediapipe/face_mesh';
 import './WebcamDemo1.css';
 import Loader from './loader/loader';
+import { Grid, Skeleton, Container } from '@mantine/core';
+import { Card, Image, Text } from '@mantine/core';
+
+const child = <Skeleton height={140} radius="md" animate={false} />;
+
 const width = 500;
 const height = 500;
 
 const WebcamDemo = (): JSX.Element => {
-  var camera = null;
   const [capturedImage, setCapturedImage] = React.useState(null);
   const { webcamRef, boundingBox, isLoading, detected, facesDetected } = useFaceDetection({
     faceDetectionOptions: {
@@ -51,12 +55,6 @@ const WebcamDemo = (): JSX.Element => {
     }
   };
   useEffect(() => {
-    console.log("Face changed", facesDetected, detected);
-
-
-    // faceMesh.onResults(onResults);
-
-    // This function will be c alled whenever myVariable changes
     // if(facesDetected==1){ 
     // capture(webcamRef)
     // ff(webcamRef)
@@ -76,7 +74,6 @@ const WebcamDemo = (): JSX.Element => {
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
     });
-    // faceMesh.onResults(onResults);
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null
@@ -85,104 +82,66 @@ const WebcamDemo = (): JSX.Element => {
       await faceMesh.send({ image: webcamRef.current.video });
     }
   }
-  function onResults(results:any) {
-    console.log(results)
-    // // const video = webcamRef.current.video;
-    // const videoWidth = webcamRef.current.video.videoWidth;
-    // const videoHeight = webcamRef.current.video.videoHeight;
-
-    // // Set canvas width
-    // canvasRef.current.width = videoWidth;
-    // canvasRef.current.height = videoHeight;
-
-    // const canvasElement = canvasRef.current;
-    // const canvasCtx = canvasElement.getContext("2d");
-    // canvasCtx.save();
-    // canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    // canvasCtx.drawImage(
-    //   results.image,
-    //   0,
-    //   0,
-    //   canvasElement.width,
-    //   canvasElement.height
-    // );
-
-    // if (results.multiFaceLandmarks) {
-    //   for (const landmarks of results.multiFaceLandmarks) {
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_TESSELATION, {
-    //       color: "#C0C0C070",
-    //       lineWidth: 1,
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_RIGHT_EYE, {
-    //       color: "#808080",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_RIGHT_EYEBROW, {
-    //       color: "#808080",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_LEFT_EYE, {
-    //       color: "#808080",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_LEFT_EYEBROW, {
-    //       color: "#808080",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_FACE_OVAL, {
-    //       color: "#E0E0E0",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_LIPS, {
-    //       color: "#E0E0E0",
-    //     });
-    //   }
-    //   // if (results.multiFaceLandmarks.length > 0) {
-    //   //   console.log('Face detected', results)
-    //   // }
-    // }
-    // canvasCtx.restore();
-  }
   return (
+
     <div>
-      {/* <p>{`Loading: ${isLoading}`}</p>
+      <Container my="md">
+        <Grid>
+          <Grid.Col span={{ base: 12, xs: 12 }}>
+            <Card
+              shadow="sm"
+              padding="xl"
+              component="a"
+              href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              target="_blank"
+            >
+              {/* <p>{`Loading: ${isLoading}`}</p>
       <p>{`Face Detected: ${detected}`}</p>
       <p>{`Number of faces detected: ${facesDetected}`}</p> */}
-      <div style={{ width, height, position: 'relative' }}>
-        {boundingBox.map((box, index) => (
-          <div
-            key={`${index + 1}`}
-            style={{
-              border: '4px solid red',
-              position: 'absolute',
-              top: `${box.yCenter * 100}%`,
-              left: `${box.xCenter * 100}%`,
-              width: `${box.width * 100}%`,
-              height: `${box.height * 100}%`,
-              zIndex: 1,
-            }}
-          >
-          <span className="fingerprint scanning"></span>
-          </div>
-        ))}
-        <div style={{ display: 'flex' }}>
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            forceScreenshotSourceSize
-            style={{
-              height,
-              width,
-              position: 'relative',
-              // display: 'none'
-            }}
-          />
-          {/* <button onClick={() => capture(webcamRef)}>Login</button> */}
-          {/* <Loader/> */}
-          {capturedImage && (
-            <div>
-              <h2>Captured Image</h2>
-  
-              <img src={capturedImage} alt="Captured" />
-            </div>
-          )}
-        </div>
-      </div>
+              <div style={{ width, height, position: 'relative' }}>
+                {boundingBox.map((box, index) => (
+                  <div
+                    key={`${index + 1}`}
+                    style={{
+                      border: '4px solid red',
+                      position: 'absolute',
+                      top: `${box.yCenter * 100}%`,
+                      left: `${box.xCenter * 100}%`,
+                      width: `${box.width * 100}%`,
+                      height: `${box.height * 100}%`,
+                      zIndex: 1,
+                    }}
+                  >
+                    <span className="fingerprint scanning"></span>
+                  </div>
+                ))}
+                <div style={{ display: 'flex' }}>
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    forceScreenshotSourceSize
+                    style={{
+                      height,
+                      width,
+                      position: 'relative',
+                      // display: 'none'
+                    }}
+                  />
+                  {/* <button onClick={() => capture(webcamRef)}>Login</button> */}
+                  {/* <Loader/> */}
+                  {capturedImage && (
+                    <div>
+                      <h2>Captured Image</h2>
+
+                      <img src={capturedImage} alt="Captured" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          </Grid.Col>
+        </Grid>
+      </Container>
     </div>
   );
 
