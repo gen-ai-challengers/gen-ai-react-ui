@@ -5,7 +5,10 @@ import WebcamDemo1 from '../../components/WebcamDemo1';
 import { signUp } from '../shared/services/auth.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectUser } from '../authSlice';
+import { useNavigate } from 'react-router-dom';
+
 const SignUp = () => {
+    const navigate = useNavigate();
     const userData = useSelector(selectUser);
     const dispatch = useDispatch();
     const form = useForm({
@@ -29,7 +32,7 @@ const SignUp = () => {
     // const submitAction = async (formData: any) => {
     const handleSubmit = async (values: typeof form.values) => {
         try {
-            const body = {
+            const body = { 
                 email: values.email,
                 name: values.name,
                 password: values.password
@@ -41,7 +44,9 @@ const SignUp = () => {
                 "is_active": true,
                 "name": "dfg"
             }),);
+            
             console.log(userData);
+            navigate('/face-registration'); // Replace '/new-url' with the actual URL
         }
         catch (e) {
             console.log("error!")

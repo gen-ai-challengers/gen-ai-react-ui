@@ -52,5 +52,6 @@ const authSlice = createSlice({
 
 export const { loginSuccess, signUpSuccess, faceAddError } = authSlice.actions
 export const selectUser = (state) => state.auth.user;
+export const selectSignUpSuccess = (state) => state.auth.isSignUp;
 
 export default authSlice.reducer;
