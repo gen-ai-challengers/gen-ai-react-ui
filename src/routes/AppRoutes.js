@@ -5,6 +5,8 @@ import SignUp from '../auth/signup/signUp';
 import WebcamDemo1 from '../components/FaceScanner'; 
 import AddFace  from "../auth/signup/addFace";
 import SignIn from "../auth/signIn/signIn";
+import ModelTrainer from "../auth/trainer/ModelTrainer";
+
 // import About from './components/About';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
@@ -14,6 +16,7 @@ const AppRoutes =() =>{
     <BrowserRouter>
       <Routes>
           <Route path="/" element={<SignIn />} />
+          <Route path="/model-trainer" element={<ModelTrainer />} />
           <Route path="/face-scan" element={<AddFace />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/protected" element={<PrivateRoute />}>

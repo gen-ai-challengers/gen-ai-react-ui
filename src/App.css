@@ -36,7 +36,25 @@
 .App-link {
   color: #61dafb;
 }
-
+.mrgl10{
+  margin-left: 10px;
+}
+.button-cintainer{
+  padding: 10px;
+}
+.textarea-cintainer{
+  padding: 10px;
+}
+.textarea-cintainer textarea{
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  resize: none;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
