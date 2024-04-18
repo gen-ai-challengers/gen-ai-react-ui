@@ -4,13 +4,21 @@ import * as Facemesh from "@mediapipe/face_mesh";
 import * as cam from "@mediapipe/camera_utils";
 import Webcam from "react-webcam";
 import { FaceDetection } from '@mediapipe/face_detection';
-
+import { TextInput, Checkbox, Button, Group, Box, Card, PasswordInput, Container, Grid, } from '@mantine/core';
 function MediaPipe() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const connect = window.drawConnectors;
+  var freeze=false;
+  var freezedata=false;
   var camera = null;
+  const freezeAction=()=>{ 
+    freeze=!freeze;
+    console.log('freeze',freeze)
+     console.log(freezedata);
+  }
   function onResults(results) {
+   
     // const video = webcamRef.current.video;
     const videoWidth = webcamRef.current.video.videoWidth;
     const videoHeight = webcamRef.current.video.videoHeight;
@@ -23,8 +31,9 @@ function MediaPipe() {
     const canvasCtx = canvasElement.getContext("2d");
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    const image = new Image();
     canvasCtx.drawImage(
-      results.image,
+      image,
       0,
       0,
       canvasElement.width,
@@ -33,6 +42,8 @@ function MediaPipe() {
 
     if (results.multiFaceLandmarks) {
       for (const landmarks of results.multiFaceLandmarks) {
+        freezedata=landmarks;
+        // console.log( Facemesh.FACEMESH_LIPS);
         connect(canvasCtx, landmarks, Facemesh.FACEMESH_TESSELATION, {
           color: "#C0C0C070",
           lineWidth: 1,
@@ -84,10 +95,10 @@ function MediaPipe() {
     faceMesh.onResults(onResults);
    //====================
    // FACE DETECT
-   const faceDetection = new FaceDetection({ locateFile: (file) => {
-    console.log(file)
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
-  }});
+  //  const faceDetection = new FaceDetection({ locateFile: (file) => {
+  //   console.log(file)
+  //   return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
+  // }});
 
   // Cleanup function to release resources
 
@@ -98,9 +109,13 @@ function MediaPipe() {
     ) {
       camera = new cam.Camera(webcamRef.current.video, {
         onFrame: async () => {
+          if(!freeze){
           await faceMesh.send({ image: webcamRef.current.video });
-          await faceDetection.send({ image: webcamRef});
-          console.log(typeof webcamRef.current.video)
+          }else{
+             
+          }
+          // await faceDetection.send({ image: webcamRef});
+          // console.log(typeof webcamRef.current.video)
         },
         width: 640,
         height: 480,
@@ -141,6 +156,7 @@ function MediaPipe() {
             height: 480,
           }}
         ></canvas>
+          <Button variant="filled" onClick={freezeAction}>Freeze</Button>
       </div>
     </center>
   );

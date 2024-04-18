@@ -1,12 +1,12 @@
 import React from 'react';
-import { TextInput, Checkbox, Button, Group, Box, Card, PasswordInput } from '@mantine/core';
+import { TextInput, Checkbox, Button, Group, Box, Card, PasswordInput, } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import WebcamDemo1 from '../../components/WebcamDemo1';
-import { signUp } from '../shared/services/auth.service';
+// import FaceScanner from '../../components/FaceScanner';
+// import { signUp } from '../shared/services/auth.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectUser } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 const SignUp = () => {
     const navigate = useNavigate();
     const userData = useSelector(selectUser);
@@ -31,26 +31,37 @@ const SignUp = () => {
     });
     // const submitAction = async (formData: any) => {
     const handleSubmit = async (values: typeof form.values) => {
+        const body = {
+            email: values.email,
+            name: values.name,
+            password: values.password
+        }
         try {
-            const body = { 
-                email: values.email,
-                name: values.name,
-                password: values.password
-            }
-            // const result = await signUp(body);
-            dispatch(signUpSuccess({
-                "email": "hani7016@gmail.com",
-                "id": 7,
-                "is_active": true,
-                "name": "dfg"
-            }),);
-            
-            console.log(userData);
-            navigate('/face-registration'); // Replace '/new-url' with the actual URL
+            const result: any = axios.post(process.env.REACT_APP_API_URL + '/register/', body)
+                .then(function (response: any) {
+                    // handle success
+                    console.log(response);
+                    if (response.data.user) {
+                        debugger;
+                        dispatch(signUpSuccess(response.data.user));
+                        console.log(userData);
+                        navigate('/face-scan');
+                    }
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .finally(function () {
+                    // always executed
+                });
         }
         catch (e) {
             console.log("error!")
         }
+
+        // Replace '/new-url' with the actual URL
+
     }
     return (
         <>
@@ -98,7 +109,7 @@ const SignUp = () => {
                     </form>
                 </Box>
             </Card>
-            {/* <WebcamDemo1/> */}
+            {/* <FaceScanner/> */}
 
         </>
     );
