@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react';
-import { TextInput, Checkbox, Button, Group, Box, Card, PasswordInput, Container, Grid, } from '@mantine/core';
-import { useForm } from '@mantine/form';
-// import FaceScanner from '../../components/FaceScanner';
-// import { SinIn } from '../shared/services/auth.service';
+import Button from '@mui/material/Button';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess, selectUser } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
@@ -26,24 +24,8 @@ const SinIn = () => {
       }
     return (
         <>
-            <Container my="md">
-                <Grid>
-                    <Grid.Col span={{ base: 12, xs: 12 }}>
-                    {/* <MediaPipe/> */}
-                        <Card
-                            shadow="sm"
-                            padding="xl"
-                            component="a"
-                        >
-                            <FaceScanner confirmScanAction={signIn} />
-                          
-                            <Button variant="filled" disabled={signIn} onClick={signInAction}>Sign In</Button>;
-                        </Card>
-                    </Grid.Col>
-                </Grid>
-            </Container>
-            {/* <FaceScanner/> */}
-
+        <FaceScanner confirmScanAction={signIn} />
+        <Button variant="contained" disabled={signIn} onClick={signInAction}>Sign In</Button>
         </>
     );
 };

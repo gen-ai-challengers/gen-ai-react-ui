@@ -1,29 +1,30 @@
 import React from 'react';
-import { BrowserRouter , Route, Routes } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter,RouterProvider } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import SignUp from '../auth/signup/signUp';
-import WebcamDemo1 from '../components/FaceScanner'; 
-import AddFace  from "../auth/signup/addFace";
+import WebcamDemo1 from '../components/FaceScanner';
+import AddFace from "../auth/signup/addFace";
 import SignIn from "../auth/signIn/signIn";
 import ModelTrainer from "../auth/trainer/ModelTrainer";
-
+import DefaultLayout from "../layout/default/DefaultLayout";
 // import About from './components/About';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
-
-const AppRoutes =() =>{
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <DefaultLayout />, // Wrap root path with Layout
+    children: [
+      { path: '/', element: <SignIn /> },
+      { path: '/sign-up', element: <SignUp /> },
+      // { path: '/about', element: <ModelTrainer /> },
+      // Add more child routes here
+    ],
+  },
+]);
+const AppRoutes = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-          <Route path="/" element={<SignIn />} />
-          <Route path="/model-trainer" element={<ModelTrainer />} />
-          <Route path="/face-scan" element={<AddFace />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/protected" element={<PrivateRoute />}>
-          <Route path="profile" element={<WebcamDemo1 />} />
-          </Route>
-      </Routes>
-    </BrowserRouter>
+      <RouterProvider router={router} />
   );
 }
 

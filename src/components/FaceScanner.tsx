@@ -8,13 +8,10 @@ import { sendToDetectionEndpoint } from './shared/services/faceService';
 import { FaceMesh } from '@mediapipe/face_mesh';
 import './FaceScanner.css';
 import Loader from './loader/loader';
-import { Grid, Skeleton, Container } from '@mantine/core';
-import { Card, Image, Text } from '@mantine/core';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectSignUpSuccess, selectUser } from '../auth/authSlice';
 import { useNavigate } from 'react-router-dom';
-const child = <Skeleton height={140} radius="md" animate={false} />;
 
 const width = 500;
 const height = 400;
@@ -28,7 +25,7 @@ const FaceScanner = (props: any): JSX.Element => {
   // ============
   const message = props;
   const [capturedImage, setCapturedImage] = React.useState(null);
-  const [cameraOutput, setCameraOutput] = React.useState<null | File>(null);
+  const [cameraOutput, setCameraOutput] = React.useState<null | Blob>(null);
   const { webcamRef, boundingBox, isLoading, detected, facesDetected } = useFaceDetection({
     faceDetectionOptions: {
       model: 'short',
@@ -43,47 +40,53 @@ const FaceScanner = (props: any): JSX.Element => {
         height,
       }),
   });
-  const convertBase64ToFile = (base64String:any) => { debugger;
+  useEffect(() => {
+    if(capturedImage){
+      fetchDataAsync();
+    }
+  }, [capturedImage]);
+  const convertBase64ToFile = (base64String: any) => {
     // Check if the input is a valid base64 string
-  const isValidBase64 = /^data:[a-zA-Z0-9\/\+]+;base64,/.test(base64String);
-  if (!isValidBase64) {
-    console.error('Invalid base64 string');
-    return;
-  }
+    const isValidBase64 = /^data:[a-zA-Z0-9\/\+]+;base64,/.test(base64String);
+    if (!isValidBase64) {
+      console.error('Invalid base64 string');
+      return;
+    }
 
-  // Extract the base64 string (remove data URI prefix)
-  const base64Content = base64String.split(';base64,')[1];
+    // Extract the base64 string (remove data URI prefix)
+    const base64Content = base64String.split(';base64,')[1];
 
-  // Convert base64 string to Blob
-  const byteCharacters = atob(base64Content);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+    // Convert base64 string to Blob
+    const byteCharacters = atob(base64Content);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'application/octet-stream' });
 
-  // Create a file from Blob
-  const convertedFile = new File([blob], 'filename.jpg');
-  setCameraOutput(convertedFile);
-  console.log(convertedFile);
+    // Create a file from Blob
+    const convertedFile = new File([blob], 'filename.jpg');
+    setCameraOutput(convertedFile);
   };
   const capture = (webcamRef: any) => {
     const imageSrc = webcamRef.current.getScreenshot();
     convertBase64ToFile(imageSrc);
     setCapturedImage(imageSrc);
-    fetchDataAsync(imageSrc);
   };
- 
-  const fetchDataAsync = async (imageSrc: any) => {
+
+  const fetchDataAsync = async () => {
     try {
       debugger;
-      const fileurl="";
+      const fileurl = "";
       const formData = new FormData();
-      // formData.append("file", capturedImage);
-      const result = await sendToDetectionEndpoint(formData);
+      if (capturedImage !== null) {
+        formData.append("file", capturedImage);
+      }
+      setCameraOutput(null);
+      // const result = await sendToDetectionEndpoint(formData);
       if (isSignUpInProgress) {
-        axios.post(process.env.REACT_APP_API_URL + '/v1/users/21/add-face', formData,{
+        axios.post(process.env.REACT_APP_API_URL + '/v1/users/21/add-face', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -99,23 +102,23 @@ const FaceScanner = (props: any): JSX.Element => {
           .finally(function () {
             // always executed
           });
-      }else{
-        axios.post(process.env.REACT_APP_API_URL + '/recognize', formData,{
+      } else {
+        axios.post(process.env.REACT_APP_API_URL + '/recognize', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         })
-        .then(function (response) {
-          // handle success
-          console.log(response);
-        })
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-        })
-        .finally(function () {
-          // always executed
-        });
+          .then(function (response) {
+            // handle success
+            console.log(response);
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          })
+          .finally(function () {
+            // always executed
+          });
       }
     } catch (error) {
       // Handle error
@@ -178,7 +181,7 @@ const FaceScanner = (props: any): JSX.Element => {
               zIndex: 1,
             }}
           >
-            <span className="fingerprint scanning"></span>
+            {/* <span className="fingerprint scanning"></span> */}
           </div>
         ))}
         <div style={{ display: 'flex' }}>
@@ -196,13 +199,13 @@ const FaceScanner = (props: any): JSX.Element => {
           {message.addAction}
           {/* <button onClick={() => capture(webcamRef)}>Login</button> */}
           {/* <Loader/> */}
-          {capturedImage && (
+          {/* {capturedImage && (
             <div>
               <h2>Captured Image</h2>
 
               <img src={capturedImage} id="screen" alt="Captured" />
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

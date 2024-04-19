@@ -6,6 +6,8 @@ const initialState = {
   user: null,
   error: null, // Optional: Add error state for login failures
   isSignUp: false,
+  registrationForm:{},
+  isOtpSuccuss: false,
   isFaceAdded: false,
   signUpError: null, // Optional: Add error state for signup failures
   faceAddError: null, // Optional: Add error state for faceadd failures
@@ -36,6 +38,12 @@ const authSlice = createSlice({
     },
     signUpSuccess(state, action) {
       state.isSignUp = true;
+      state.isOtpSuccuss = true;
+      // state.registrationForm = action.payload;
+      state.user = action.payload;
+    },
+    otpSuccess(state, action) {
+      state.isOtpSuccuss = true;
       state.user = action.payload;
     },
     faceAddSuccess(state, action) {
