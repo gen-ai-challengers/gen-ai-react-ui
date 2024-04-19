@@ -29,8 +29,8 @@ const SinIn = () => {
             <Container my="md">
                 <Grid>
                     <Grid.Col span={{ base: 12, xs: 12 }}>
-                    <MediaPipe/>
-                        {/* <Card
+                    {/* <MediaPipe/> */}
+                        <Card
                             shadow="sm"
                             padding="xl"
                             component="a"
@@ -38,7 +38,7 @@ const SinIn = () => {
                             <FaceScanner confirmScanAction={signIn} />
                           
                             <Button variant="filled" disabled={signIn} onClick={signInAction}>Sign In</Button>;
-                        </Card> */}
+                        </Card>
                     </Grid.Col>
                 </Grid>
             </Container>

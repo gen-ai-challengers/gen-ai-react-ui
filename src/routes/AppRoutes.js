@@ -20,7 +20,7 @@ const AppRoutes =() =>{
           <Route path="/face-scan" element={<AddFace />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/protected" element={<PrivateRoute />}>
-              <Route path="profile" element={<WebcamDemo1 />} />
+          <Route path="profile" element={<WebcamDemo1 />} />
           </Route>
       </Routes>
     </BrowserRouter>

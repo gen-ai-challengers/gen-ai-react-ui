@@ -16,14 +16,6 @@ function App() {
   return (
     <MantineProvider theme={theme}>
     <div className="App">
-      {/* <header className="App-header"> */}
-        {/* <FaceDetection/> */}
-        {/* <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p> */}
-        {/* <WebcamDemo1 /> */}
-      {/* </header> */}
       <div className='App-body'>
       <Container  size="xs" {...demoProps}>
       <AppRoutes/>

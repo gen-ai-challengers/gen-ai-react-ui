@@ -193,13 +193,18 @@ const ModelTrainer = () => {
                 <Grid>
                     <Grid.Col span={{ base: 12, xs: 12 }}>
                           <div className="button-cintainer">
-                             <Select
-                                    label="Select lip"
-                                    placeholder="Select value"
-                                    data={lipmaster}
-                                    value={value ? value.value : null}
-                                    onChange={(_value, option) => setValue(option)}
-                                    />
+                            <div style={{with:100}}>
+                            <Select
+                                
+                                label="Select lip"
+                                placeholder="Select value"
+                                data={lipmaster}
+                                value={value ? value.value : null}
+                                onChange={(_value, option) => setValue(option)}
+                                />
+                            </div>
+                                     <Button variant="filled" onClick={freezeAction}>[</Button>
+                                     <Button variant="filled" onClick={freezeAction}>]</Button>
                              </div>
                             <div className="button-cintainer">
                                 <Button variant="filled" onClick={freezeAction}>Freeze</Button>
