@@ -275,12 +275,6 @@ export default function SignUp(onSignUp) {
           required
         />
       </FormGrid>
-      <FormGrid item xs={12}>
-        <FormControlLabel
-          control={<Checkbox name="saveAddress" value="yes" />}
-          label="Use this address for payment details"
-        />
-      </FormGrid>
 
     </Grid>      </form>
   );

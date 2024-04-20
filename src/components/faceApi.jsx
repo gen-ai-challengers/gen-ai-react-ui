@@ -1,6 +1,8 @@
 import * as faceapi from 'face-api.js';
 import React from 'react';
-
+import Button from '@mui/material/Button';
+import LocalSeeIcon from '@mui/icons-material/LocalSee';
+import NoPhotographyIcon from '@mui/icons-material/NoPhotography';
 function FaceApi() {
 
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
@@ -41,7 +43,7 @@ function FaceApi() {
 
   const handleVideoOnPlay = () => { 
     setInterval(async () => {
-      if (canvasRef && canvasRef.current) {
+      if (canvasRef && canvasRef.current && videoRef && videoRef.current) {
         canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
         const displaySize = {
           width: videoWidth,
@@ -72,14 +74,8 @@ function FaceApi() {
     <div>
       <div style={{ textAlign: 'center', padding: '2px' }}>
         {
-          captureVideo && modelsLoaded ?
-            <button onClick={closeWebcam} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '2px', fontSize: '15px', border: 'none', borderRadius: '4px' }}>
-              Close Webcam
-            </button>
-            :
-            <button onClick={startVideo} style={{ cursor: 'pointer', backgroundColor: 'green', color: 'white', padding: '2px', fontSize: '15px', border: 'none', borderRadius: '4px' }}>
-              Open Webcam
-            </button>
+          captureVideo && modelsLoaded ?<Button onClick={closeWebcam} variant="outlined" startIcon={<NoPhotographyIcon/>}>
+          </Button>:<Button onClick={startVideo} variant="outlined" startIcon={< LocalSeeIcon/>}></Button>
         }
       </div>
       {
