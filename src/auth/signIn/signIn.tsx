@@ -7,6 +7,7 @@ import { loginSuccess, selectUser } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
 import FaceScanner from '../../components/FaceScanner';
 import MediaPipe from '../../components/mediaPipe';
+import FaceApi from '../../components/faceApi';
 import axios from 'axios';
 const SinIn = () => {
     const [signIn, setsignInAction] = useState(false);
@@ -24,8 +25,9 @@ const SinIn = () => {
       }
     return (
         <>
-        <FaceScanner confirmScanAction={signIn} />
-        <Button variant="contained" disabled={signIn} onClick={signInAction}>Sign In</Button>
+        {/* <FaceScanner confirmScanAction={signIn} /> */}
+        <FaceApi/>
+        <Button variant="contained" disabled={signIn} color="success" onClick={signInAction}>Confirm</Button>
         </>
     );
 };

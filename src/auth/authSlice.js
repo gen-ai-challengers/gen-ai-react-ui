@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'; // Use createSlice if using toolkit
 
 const initialState = {
-  count:0,
+  count: 0,
   isLoggedIn: false,
   user: null,
   error: null, // Optional: Add error state for login failures
+  isSignUpClicked: false,
   isSignUp: false,
-  registrationForm:{},
+  registrationForm: {},
   isOtpSuccuss: false,
   isFaceAdded: false,
   signUpError: null, // Optional: Add error state for signup failures
@@ -36,6 +37,10 @@ const authSlice = createSlice({
     loginError(state, action) { // Optional: Handle login errors
       state.error = action.payload;
     },
+    signUpClicked(state, action) {
+      console.log(action)
+      state.isSignUpClicked = action.payload;
+    },
     signUpSuccess(state, action) {
       state.isSignUp = true;
       state.isOtpSuccuss = true;
@@ -58,8 +63,8 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, signUpSuccess, faceAddError } = authSlice.actions
+export const { loginSuccess, signUpSuccess, faceAddError, signUpClicked } = authSlice.actions
 export const selectUser = (state) => state.auth.user;
 export const selectSignUpSuccess = (state) => state.auth.isSignUp;
-
+export const SignUpClicked = (state) => state.auth.isSignUpClicked;
 export default authSlice.reducer;

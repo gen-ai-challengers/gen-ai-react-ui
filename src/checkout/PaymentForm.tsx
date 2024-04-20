@@ -1,17 +1,26 @@
-import React, { useState }  from 'react';
+import * as React from 'react';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import { Card as MuiCard } from '@mui/material';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import Checkbox from '@mui/material/Checkbox';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
 import { styled } from '@mui/material/styles';
+
+import AccountBalanceRoundedIcon from '@mui/icons-material/AccountBalanceRounded';
 import CreditCardRoundedIcon from '@mui/icons-material/CreditCardRounded';
-import FaceScanner from '../../components/FaceScanner';
-import MediaPipe from "../../components/mediaPipe";
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { signUpSuccess, selectUser } from '../authSlice';
-import FaceApi from '../../components/faceApi';
+import SimCardRoundedIcon from '@mui/icons-material/SimCardRounded';
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+
 const Card = styled(MuiCard)<{ selected?: boolean }>(({ theme, selected }) => ({
   border: '1px solid',
   borderColor: theme.palette.divider,
@@ -40,12 +49,12 @@ const Card = styled(MuiCard)<{ selected?: boolean }>(({ theme, selected }) => ({
   }),
 }));
 
-const CameraContainer = styled('div')(({ theme }) => ({
+const PaymentContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   width: '100%',
-  height: '100%',
+  height: 375,
   padding: theme.spacing(3),
   borderRadius: '20px',
   border: '1px solid ',
@@ -69,20 +78,39 @@ const FormGrid = styled('div')(() => ({
 }));
 
 export default function PaymentForm() {
-  const [addAction, setAddAction] = useState(false);
-  const navigate = useNavigate();
-  const userData = useSelector(selectUser);
-  const dispatch = useDispatch();
-  const addfaceAction = () => { 
-    setAddAction(true);
-    setTimeout(() => {
-      // setAddAction(false);
-      // Code to be executed after the delay
-      console.log('Delayed action performed');
-    }, 2000);
-    // console.log(addAction)
-  }
+  const [paymentType, setPaymentType] = React.useState('creditCard');
+  const [cardNumber, setCardNumber] = React.useState('');
+  const [cvv, setCvv] = React.useState('');
+  const [expirationDate, setExpirationDate] = React.useState('');
 
+  const handlePaymentTypeChange = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setPaymentType(event.target.value);
+  };
+
+  const handleCardNumberChange = (event: { target: { value: string } }) => {
+    const value = event.target.value.replace(/\D/g, '');
+    const formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+    if (value.length <= 16) {
+      setCardNumber(formattedValue);
+    }
+  };
+
+  const handleCvvChange = (event: { target: { value: string } }) => {
+    const value = event.target.value.replace(/\D/g, '');
+    if (value.length <= 3) {
+      setCvv(value);
+    }
+  };
+
+  const handleExpirationDateChange = (event: { target: { value: string } }) => {
+    const value = event.target.value.replace(/\D/g, '');
+    const formattedValue = value.replace(/(\d{2})(?=\d{2})/, '$1/');
+    if (value.length <= 4) {
+      setExpirationDate(formattedValue);
+    }
+  };
 
   return (
     <Stack spacing={{ xs: 3, sm: 6 }} useFlexGap>
@@ -93,24 +121,27 @@ export default function PaymentForm() {
             gap: 2,
           }}
         >
-          <CameraContainer>
+          <PaymentContainer>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="subtitle2">Face Recognition</Typography>
               <CreditCardRoundedIcon sx={{ color: 'text.secondary' }} />
             </Box>
             <Box
               sx={{
+                display: 'flex',
                 justifyContent: 'space-between',
                 width: '100%',
                 gap: 2,
               }}
             >
-              {/* <FaceScanner confirmScanAction={addAction} /> */}
-              <FaceApi/>
             </Box>
             <Box sx={{ display: 'flex', gap: 2 }}>
             </Box>
-          </CameraContainer>
+          </PaymentContainer>
+          <FormControlLabel
+            control={<Checkbox name="saveCard" />}
+            label="Remember credit card details for next time"
+          />
         </Box>
       
     </Stack>

@@ -1,44 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import Grid from '@mui/material/Grid';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import {
-  TextField,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   FormHelperText,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-// import FaceScanner from '../../components/FaceScanner';
-// import { signUp } from '../shared/services/auth.service';
+import { styled } from '@mui/system';
 import { useSelector, useDispatch } from 'react-redux';
-import { signUpSuccess, selectUser } from '../authSlice';
+import { signUpSuccess, selectUser,SignUpClicked,signUpClicked } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import LockIcon from '@mui/icons-material/Lock';
 import Person2Icon from '@mui/icons-material/Person2';
 import InputAdornment from '@mui/material/InputAdornment';
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
+const FormGrid = styled(Grid)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
 }));
-const SignUp = () => {
+
+export default function SignUp(onSignUp) {
   const navigate = useNavigate();
   const userData = useSelector(selectUser);
+  const signUpTriggered=useSelector(SignUpClicked);
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
+    name: '',
+    lastname: '',
+    addrl1: '',
+    addrl2: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: '',
     email: '',
+    phone: '',
     password: '',
+    confirmpassword: '',
   });
-
+  useEffect(() => {
+    if(signUpTriggered){
+      handleSubmit();
+    }
+  },[signUpTriggered]);
   const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
@@ -55,13 +62,11 @@ const SignUp = () => {
     // if (!formData.password || formData.password.length < 6) {
     //   newErrors.password = 'Password must be at least 6 characters long';
     // }
-
+    // dispatch(signUpClicked(false));
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
       debugger;
     if (validate()) {
       // Submit form data (e.g., send to server)
@@ -79,7 +84,7 @@ const SignUp = () => {
                   if (response.data.user) {
                       dispatch(signUpSuccess(response.data.user));
                       console.log(userData);
-                      navigate('/face-scan');
+                      // navigate('/add-face');
                   }
               })
               .catch(function (error) {
@@ -98,116 +103,185 @@ const SignUp = () => {
     }
   };
 
-
-  // const submitAction = async (formData: any) => {
-  // const handleSubmit = async (values: typeof form.values) => {
-  //     const body = {
-  //         email: values.email,
-  //         name: values.name,
-  //         password: values.password
-  //     }
-  //     try {
-  //         const result: any = axios.post(process.env.REACT_APP_API_URL + '/register/', body)
-  //             .then(function (response: any) {
-  //                 // handle success
-  //                 console.log(response);
-  //                 if (response.data.user) {
-  //                     debugger;
-  //                     dispatch(signUpSuccess(response.data.user));
-  //                     console.log(userData);
-  //                     navigate('/face-scan');
-  //                 }
-  //             })
-  //             .catch(function (error) {
-  //                 // handle error
-  //                 console.log(error);
-  //             })
-  //             .finally(function () {
-  //                 // always executed
-  //             });
-  //     }
-  //     catch (e) {
-  //         console.log("error!")
-  //     }
-
-  //     // Replace '/new-url' with the actual URL
-
-  // }
   return (
-    <>
+    <form>
+    <Grid container spacing={3}>
 
-      <form onSubmit={handleSubmit}>
-        <Box sx={{ width:'100%', display: 'flex' }}>
-          <Box sx={{ p: 2, textAlign: 'center', display: 'flex',paddingTop:'125px' }}>
-            <Grid container spacing={2}>
-            <Grid item xs={12}>
+      <FormGrid item xs={12} md={6}>
+        <FormLabel htmlFor="first-name" required>
+          First name
+        </FormLabel>
+        <OutlinedInput
+          id="first-name"
+          name="name"
+          type="name"
+          error={!!errors.name}
+          placeholder="John"
+          autoComplete="first name"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={12} md={6}>
+        <FormLabel htmlFor="last-name" required>
+          Last name
+        </FormLabel>
+        <OutlinedInput
+          id="last-name"
+          name="lastname"
+          type="last-name"
+          error={!!errors.lastname}
+          placeholder="Snow"
+          autoComplete="last name"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={12}>
+        <FormLabel htmlFor="address1" required>
+          Address line 1
+        </FormLabel>
+        <OutlinedInput
+          id="address1"
+          name="addrl1"
+          type="address1"
+          error={!!errors.addrl1}
+          placeholder="Street name and number"
+          autoComplete="shipping address-line1"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={12}>
+        <FormLabel htmlFor="address2">Address line 2</FormLabel>
+        <OutlinedInput
+          id="address2"
+          name="addrl2"
+          error={!!errors.addrl2}
+          type="address2"
+          placeholder="Apartment, suite, unit, etc. (optional)"
+          autoComplete="shipping address-line2"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="city" required>
+          City
+        </FormLabel>
+        <OutlinedInput
+          id="city"
+          name="city"
+          error={!!errors.city}
+          type="city"
+          placeholder="New York"
+          autoComplete="City"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="state" required>
+          State
+        </FormLabel>
+        <OutlinedInput
+          id="state"
+          name="state"
+          error={!!errors.state}
+          type="state"
+          placeholder="NY"
+          autoComplete="State"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="zip" required>
+          Zip / Postal code
+        </FormLabel>
+        <OutlinedInput
+          id="zip"
+          name="zip"
+          error={!!errors.zip}
+          type="zip"
+          placeholder="12345"
+          autoComplete="shipping postal-code"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="country" required>
+          Country
+        </FormLabel>
+        <OutlinedInput
+          id="country"
+          name="country"
+          error={!!errors.country}
+          type="country"
+          placeholder="United States"
+          autoComplete="shipping country"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="zip" required>
+          Email
+        </FormLabel>
+        <OutlinedInput
+          id="email"
+          name="email"
+          error={!!errors.email}
+          type="email"
+          placeholder="12345"
+          autoComplete="shipping postal-code"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="country" required>
+          Phone
+        </FormLabel>
+        <OutlinedInput
+          id="phone"
+          name="phone"
+          error={!!errors.country}
+          type="phone"
+          placeholder="Phone"
+          autoComplete="shipping country"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="zip" required>
+          Password
+        </FormLabel>
+        <OutlinedInput
+          id="password"
+          name="password"
+          error={!!errors.password}
+          helperText={errors.password}
+          type="password"
+          placeholder="12345"
+          autoComplete="shipping postal-code"
+          required
+        />
+        <FormHelperText sx={{ color: 'errors.main' }}>{errors.password ? errors.password : ''}</FormHelperText>
+      </FormGrid>
+      <FormGrid item xs={6}>
+        <FormLabel htmlFor="country" required>
+          Confirm password
+        </FormLabel>
+        <OutlinedInput
+          id="confirmpassword"
+          name="confirmpassword"
+          error={!!errors.country}
+          type="confirmpassword"
+          placeholder="Confirm password"
+          autoComplete="shipping country"
+          required
+        />
+      </FormGrid>
+      <FormGrid item xs={12}>
+        <FormControlLabel
+          control={<Checkbox name="saveAddress" value="yes" />}
+          label="Use this address for payment details"
+        />
+      </FormGrid>
 
-                <TextField
-                fullWidth
-                  label="Name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  error={!!errors.name}
-                  helperText={errors.name}
-                  variant="standard"
-                  startAdornment={
-                    <InputAdornment position="start">
-                    <Person2Icon/>
-                    </InputAdornment>
-                  }
-                />
-              </Grid>
-              <Grid item xs={12}>
-                
-                <TextField
-                  fullWidth
-                  label="Phone Number"
-                  name="phone"
-                  type="text"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  error={!!errors.phone}
-                  helperText={errors.phone}
-                  variant="standard"
-                  startAdornment={
-                    <InputAdornment position="start">
-                  <LocalPhoneIcon/>
-                    </InputAdornment>
-                  }
-                />
-              </Grid>
-              <Grid item xs={12}>
-                
-                <TextField
-                  fullWidth
-                  label="Password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  error={!!errors.password}
-                  helperText={errors.password}
-                  variant="standard"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <LockIcon/>
-                    </InputAdornment>
-                  }
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button type="submit" color="success" variant="contained" fullWidth>
-                  Submit
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </form>
-    </>
+    </Grid>      </form>
   );
-};
-
-export default SignUp;
+}

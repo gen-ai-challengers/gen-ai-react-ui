@@ -41,7 +41,7 @@ const FaceScanner = (props: any): JSX.Element => {
       }),
   });
   useEffect(() => {
-    if(capturedImage){
+    if (capturedImage) {
       fetchDataAsync();
     }
   }, [capturedImage]);
@@ -79,10 +79,7 @@ const FaceScanner = (props: any): JSX.Element => {
     try {
       debugger;
       const fileurl = "";
-      const formData = new FormData();
-      if (capturedImage !== null) {
-        formData.append("file", capturedImage);
-      }
+      const formData ={file:capturedImage};
       setCameraOutput(null);
       // const result = await sendToDetectionEndpoint(formData);
       if (isSignUpInProgress) {
@@ -103,11 +100,7 @@ const FaceScanner = (props: any): JSX.Element => {
             // always executed
           });
       } else {
-        axios.post(process.env.REACT_APP_API_URL + '/recognize', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
+        axios.post(process.env.REACT_APP_API_URL + '/recognize', formData)
           .then(function (response) {
             // handle success
             console.log(response);
@@ -167,7 +160,7 @@ const FaceScanner = (props: any): JSX.Element => {
       {/* <p>{`Loading: ${isLoading}`}</p>
       <p>{`Face Detected: ${detected}`}</p>
       <p>{`Number of faces detected: ${facesDetected}`}</p> */}
-      <div style={{ width: '100%', height, position: 'relative' }}>
+      <div style={{ width: '350px', height, position: 'relative' }}>
         {boundingBox.map((box, index) => (
           <div
             key={`${index + 1}`}

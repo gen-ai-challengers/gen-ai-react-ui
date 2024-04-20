@@ -7,20 +7,23 @@ import AddFace from "../auth/signup/addFace";
 import SignIn from "../auth/signIn/signIn";
 import ModelTrainer from "../auth/trainer/ModelTrainer";
 import DefaultLayout from "../layout/default/DefaultLayout";
-// import About from './components/About';
+import Checkout from "../checkout/Checkout";
+import SignUpLayout from '../auth/signup/signUpLayout';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
 const router = createBrowserRouter([
+  { path: '/sign-up', element: <SignUpLayout /> },
   {
     path: '/',
     element: <DefaultLayout />, // Wrap root path with Layout
     children: [
       { path: '/', element: <SignIn /> },
-      { path: '/sign-up', element: <SignUp /> },
+      { path: '/add-face', element: <AddFace /> },
       // { path: '/about', element: <ModelTrainer /> },
       // Add more child routes here
     ],
   },
+  { path: '/checkout', element: <Checkout /> },
 ]);
 const AppRoutes = () => {
   return (
