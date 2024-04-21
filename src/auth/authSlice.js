@@ -12,7 +12,7 @@ const initialState = {
   isFaceAdded: false,
   signUpError: null, // Optional: Add error state for signup failures
   faceAddError: null, // Optional: Add error state for faceadd failures
-
+  faceRecognitionConfirm:false
 };
 // Simulate an asynchronous authentication check (replace with your actual logic)
 export const checkAuthentication = createAsyncThunk(
@@ -47,6 +47,9 @@ const authSlice = createSlice({
       // state.registrationForm = action.payload;
       state.user = action.payload;
     },
+    setFaceRecognitionConfirm(state,action){
+      state.faceRecognitionConfirm=action.payload;
+    },
     otpSuccess(state, action) {
       state.isOtpSuccuss = true;
       state.user = action.payload;
@@ -63,8 +66,9 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, signUpSuccess, faceAddError, signUpClicked } = authSlice.actions
+export const { loginSuccess, signUpSuccess, faceAddError, signUpClicked,faceRecognitionConfirm } = authSlice.actions
 export const selectUser = (state) => state.auth.user;
 export const selectSignUpSuccess = (state) => state.auth.isSignUp;
 export const SignUpClicked = (state) => state.auth.isSignUpClicked;
+export const getFaceRecognitionConfirm = (state) =>state.auth.faceRecognitionConfirm;
 export default authSlice.reducer;

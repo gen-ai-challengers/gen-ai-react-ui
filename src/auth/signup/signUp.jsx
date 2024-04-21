@@ -71,6 +71,7 @@ export default function SignUp(onSignUp) {
     if (validate()) {
       // Submit form data (e.g., send to server)
       console.log('Form submitted successfully!', formData);
+      dispatch(signUpSuccess({id:1})); return;
       const body = {
                 phone: formData.name,
                 name: formData.name,

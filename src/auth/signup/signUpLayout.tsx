@@ -50,7 +50,7 @@ function ToggleCustomTheme({
   );
 }
 
-const steps = ['Sign Up', 'Face Recognition'];
+const steps = ['Sign Up', 'Face Registration'];
 
 function getStepContent(step: number) {
   switch (step) {

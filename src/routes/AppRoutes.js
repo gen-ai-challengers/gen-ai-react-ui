@@ -9,10 +9,12 @@ import ModelTrainer from "../auth/trainer/ModelTrainer";
 import DefaultLayout from "../layout/default/DefaultLayout";
 import Checkout from "../checkout/Checkout";
 import SignUpLayout from '../auth/signup/signUpLayout';
+import AntMedia from '../components/antmedia/AntMedia';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
 const router = createBrowserRouter([
   { path: '/sign-up', element: <SignUpLayout /> },
+  { path: '/ant-media', element: <AntMedia /> },
   {
     path: '/',
     element: <DefaultLayout />, // Wrap root path with Layout

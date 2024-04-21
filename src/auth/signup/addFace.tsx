@@ -94,10 +94,6 @@ export default function PaymentForm() {
           }}
         >
           <CameraContainer>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="subtitle2">Face Recognition</Typography>
-              <CreditCardRoundedIcon sx={{ color: 'text.secondary' }} />
-            </Box>
             <Box
               sx={{
                 justifyContent: 'space-between',

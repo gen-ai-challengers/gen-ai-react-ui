@@ -3,6 +3,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import LocalSeeIcon from '@mui/icons-material/LocalSee';
 import NoPhotographyIcon from '@mui/icons-material/NoPhotography';
+import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 function FaceApi() {
 
   const [modelsLoaded, setModelsLoaded] = React.useState(false);
@@ -53,13 +54,37 @@ function FaceApi() {
         faceapi.matchDimensions(canvasRef.current, displaySize);
 
         const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-
+        if (!canvasRef.current || !videoRef.current) {
+          return;
+        }
+        if (detections) {
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
         canvasRef && canvasRef.current && canvasRef.current.getContext('2d').clearRect(0, 0, videoWidth, videoHeight);
         canvasRef && canvasRef.current && faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
         // canvasRef && canvasRef.current && faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
         // canvasRef && canvasRef.current && faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+      
+          const dims = faceapi.matchDimensions(canvasRef.current, videoRef.current, true);
+          const resizeResults = faceapi.resizeResults(detections, dims);
+      
+          const facesWithHighScore = resizeResults.filter(
+            (data) => data.detection.score > 0.7
+          );
+      
+          if (facesWithHighScore.length > 0) {
+            if (facesWithHighScore.length > 1) {
+              console.log("multipleFacesDetected");
+            } else {
+              const faceData = JSON.parse(JSON.stringify(facesWithHighScore[0]));
+              faceData.score = facesWithHighScore[0].detection.score;
+              delete faceData.detection;
+              faceData.videoRef = videoRef;
+              faceData.canvasRef = canvasRef;
+              console.log("faceDetected", faceData);
+            }
+          }
+          faceapi.draw.drawDetections(canvasRef.current, facesWithHighScore);
+        }
       }
     }, 100)
   }
@@ -85,6 +110,9 @@ function FaceApi() {
               <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
                 <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
                 <canvas ref={canvasRef} style={{ position: 'absolute' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
+              <Button onClick={startVideo} variant="outlined" startIcon={< CenterFocusStrongIcon/>}>Capture</Button>
               </div>
             </div>
             :

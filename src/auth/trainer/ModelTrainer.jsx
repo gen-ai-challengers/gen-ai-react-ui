@@ -5,7 +5,6 @@ import * as Facemesh from "@mediapipe/face_mesh";
 import * as cam from "@mediapipe/camera_utils";
 import Webcam from "react-webcam";
 import { useNavigate } from 'react-router-dom';
-import { Checkbox, Button, Group, Box, Card, Select , Container, Grid, } from '@mantine/core';
 import { useSelector, useDispatch } from 'react-redux';
 import {  addToTrainer,clearModel,selectModel } from './trainerSlice';
 const ModelTrainer = () => {
@@ -189,7 +188,7 @@ const ModelTrainer = () => {
    
     return (
         <center>
-            <Container my="md">
+            {/* <Container my="md">
                 <Grid>
                     <Grid.Col span={{ base: 12, xs: 12 }}>
                           <div className="button-cintainer">
@@ -243,15 +242,15 @@ const ModelTrainer = () => {
                                     height: 480,
                                 }}
                             ></canvas>
-                            {/* <Button variant="filled" onClick={showTrainedModel}>Show Model</Button> */}
-                            {/* <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
+                            <Button variant="filled" onClick={showTrainedModel}>Show Model</Button>
+                            <input type="text" value={text} onChange={(e) => setText(e.target.value)} />
           <button onClick={synthesizeAudio}>Synthesize Audio</button>
-          <audio controls src={audio} /> */}
+          <audio controls src={audio} />
 
                         </div>
                     </Grid.Col>
                 </Grid>
-            </Container>
+            </Container> */}
 
         </center>
     );
