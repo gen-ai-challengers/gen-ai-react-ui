@@ -11,6 +11,7 @@ import Checkout from "../checkout/Checkout";
 import SignUpLayout from '../auth/signup/signUpLayout';
 import AntMedia from '../components/antmedia/AntMedia';
 import WebRTCVideoChat from '../components/webRtc';
+import CatelogueHome from '../catalogue/catalogueHome';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
 const router = createBrowserRouter([
@@ -21,11 +22,12 @@ const router = createBrowserRouter([
     element: <DefaultLayout />, // Wrap root path with Layout
     children: [
       { path: '/', element: <WebRTCVideoChat /> },
-      { path: '/add-face', element: <AddFace /> },
+      // { path: '/add-face', element: <AddFace /> },
       // { path: '/about', element: <ModelTrainer /> },
       // Add more child routes here
     ],
   },
+  { path: '/babylon', element: <CatelogueHome /> },
   { path: '/checkout', element: <Checkout /> },
 ]);
 const AppRoutes = () => {
