@@ -12,6 +12,7 @@ import SignUpLayout from '../auth/signup/signUpLayout';
 import AntMedia from '../components/antmedia/AntMedia';
 import WebRTCVideoChat from '../components/webRtc';
 import CatelogueHome from '../catalogue/catalogueHome';
+import MediaPipe1 from '../components/mediaPipe1';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
 const router = createBrowserRouter([
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
   },
   { path: '/babylon', element: <CatelogueHome /> },
   { path: '/checkout', element: <Checkout /> },
+  { path: '/mediapipe', element: <MediaPipe1 /> },
 ]);
 const AppRoutes = () => {
   return (

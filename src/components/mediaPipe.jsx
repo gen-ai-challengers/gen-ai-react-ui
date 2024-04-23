@@ -4,7 +4,7 @@ import * as Facemesh from "@mediapipe/face_mesh";
 import * as cam from "@mediapipe/camera_utils";
 import Webcam from "react-webcam";
 import { FaceDetection } from '@mediapipe/face_detection';
-import { TextInput, Checkbox, Button, Group, Box, Card, PasswordInput, Container, Grid, } from '@mantine/core';
+import Button from '@mui/material/Button';
 import axios, { Axios } from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -170,8 +170,8 @@ function MediaPipe() {
           <br />
         </div>
         <div className="button-cintainer" style={{ marginLeft: '100px;', display: 'flex' }}>
-          <Button onClick={synthesizeAudio}>Synthesize Audio</Button>
-          <Button className="mrgl10" color="red" onClick={gotoTrainer}>Train Model</Button>
+          {/* <Button onClick={synthesizeAudio}>Synthesize Audio</Button>
+          <Button className="mrgl10" color="red" onClick={gotoTrainer}>Train Model</Button> */}
           <br />
           {/* style={{display:'none'}}  */}
           {audioSrc && <audio onPlay={playHandler}  autoPlay={isPlaying} controls src={audioSrc} />}
