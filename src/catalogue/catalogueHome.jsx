@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI } from 'babylonjs';
+import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI ,AxesViewer} from 'babylonjs';
 
 import '@babylonjs/loaders'; // Register loaders
 import "@babylonjs/core/Loading/loadingScreen";
@@ -22,6 +22,7 @@ const CatelogueHome = () => {
     // Create Babylon.js engine and scene
     const engine = new Engine(canvasRef.current, true);
     const scene = new Scene(engine);
+    // var axes = new AxesViewer(scene, 2);
     scene.onPointerDown = (evt) => {
       if (evt.button === 0) engine.enterPointerlock();
       if (evt.button === 1) engine.exitPointerlock();
@@ -59,8 +60,11 @@ const CatelogueHome = () => {
       //// Result has meshes, particleSystems, skeletons, animationGroups and transformNodes
     });
 
-    const glass = SceneLoader.ImportMesh(null, "./models/babylon/", "vintage_watch.glb", scene, function (newMeshes) {
+    const glass = SceneLoader.ImportMesh(null, "./models/store/", "kallax_shelf.glb", scene, function (newMeshes) {
       newMeshes[0].getChildMeshes()[0].metadata = "cannon";
+      const importedMesh = newMeshes[0];
+      importedMesh.position.set(0, 0, 0);
+      importedMesh.rotation.x=100;
       console.log(newMeshes)
       scene.onPointerDown = function castRay() {
         console.log('clcik')
@@ -68,7 +72,7 @@ const CatelogueHome = () => {
 
         var hit = scene.pickWithRay(ray);
         if (hit.pickedMesh && hit.pickedMesh.metadata == "cannon") {
-          createGUIButton();
+          // createGUIButton();
         } else {
           handleClose();
         }
