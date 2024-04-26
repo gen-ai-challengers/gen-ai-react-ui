@@ -1,296 +1,395 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-const configuration = {
-    iceServers: [
-        {
-            urls: "turn:turn.genai-vm.amprajin.in:3478",
-            username: "genai",
-            credential: "genai",
-        }
-    ],
+import React, { useState, useRef, useEffect } from 'react';
+import './loader.css';
+const WEBRTC_CONFIG = {
+  sdpSemantics: "unified-plan",
+  iceServers: [
+    {
+      urls: "turn:turn.genai-vm.amprajin.in:3478",
+      username: "genai",
+      credential: "genai",
+    }
+  ],
 };
 
-function WebRTCVideoChat() {
-    const [localStream, setLocalStream] = useState(null);
-    const [remoteStream, setRemoteStream] = useState(null);
-    const [peerConnection, setPeerConnection] = useState(null);
-    const [isCalling, setIsCalling] = useState(false);
+function WebRtcAuth(props) {
+  const [localConnection, setLocalConnection] = useState(null);
+  const [remoteConnection, setRemoteConnection] = useState(null);
+  const [dataChannel, setDataChannel] = useState(null);
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [loader, setLoader] = useState(false);
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  var pc = null;
+  var startTime;
+  var dc = null;
+  var dcInterval = null;
+  var dcInterval2 = null;
+  var stopped = false;
+  var action = props.action;
+  console.log(props)
+  const myStyle = {
+    width: '48px',
+    height:' 48px',
+    display: 'inline-block',
+    position: 'relative',
+    color: 'red',
+    border: '1px solid',
+    boxSizing: 'border-box',
+    animation: 'fill 2s linear infinite alternate'
+  };
+  useEffect(() => {
+    start();
+  }, []);
 
-    const localVideoRef = useRef(null);
-    const remoteVideoRef = useRef(null);
-    var dcInterval = null;
-    var pc = null;
-    var startTime;
-    var iceGatheringLog;
-    var iceConnectionLog;
-    var signalingLog;
-    var dataChannelLog;
-    var offer_sdp;
-    var answer_sdp;
-    useEffect(() => {
-        const startStream = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                setLocalStream(stream);
-                localVideoRef.current.srcObject = stream;
-            } catch (error) {
-                console.error('Error accessing media devices:', error);
-            }
-        };
+  const createPeerConnection = () => {
+    // create an RTCPeerConnection
+    console.log("1.1 Creating RTCPeerConnection", new Date().getTime() - startTime);
+    var config = {
+      sdpSemantics: "unified-plan",
+      iceServers: [{
+        urls: "turn:turn.genai.amprajin.in:3478",
+        username: "genai",
+        credential: "genai",
+      }],
+    };
 
-        startStream();
-    }, []);
-    const createPeerConnection = () => {
-        setIsCalling(true);
-        try {
-            pc = new RTCPeerConnection(configuration);
-        } catch (e) {
-            console.error("Error creating RTCPeerConnection", e);
-            alert("Error creating RTCPeerConnection" + e);
-            return;
-        }
-        setPeerConnection(pc);
-
-        pc.onicecandidate = (event) => {
-            if (event.candidate) {
-                // Send ICE candidate to signaling server (implementation needed)
-                console.log('Sending ICE candidate:', event.candidate);
-            }
-        };
-
-        pc.onaddstream = (event) => {
-            setRemoteStream(event.stream);
-            remoteVideoRef.current.srcObject = event.stream;
-        };
-        // register some listeners to help debugging
-        pc.addEventListener(
-            "icegatheringstatechange",
-            () => {
-                console.log(" -> ICE gathering state change to:", pc.iceGatheringState, new Date().getTime() - startTime);
-                iceGatheringLog = " -> " + pc.iceGatheringState;
-            },
-            false
-        );
-        iceGatheringLog = pc.iceGatheringState;
-
-        pc.addEventListener(
-            "iceconnectionstatechange",
-            () => {
-                console.log(" -> ICE connection state change to:", pc.iceConnectionState, new Date().getTime() - startTime);
-                iceConnectionLog= " -> " + pc.iceConnectionState;
-            },
-            false
-        );
-        iceConnectionLog= pc.iceConnectionState;
-
-        pc.addEventListener(
-            "signalingstatechange",
-            () => {
-                console.log(" -> Signaling state change to:", pc.signalingState, new Date().getTime() - startTime);
-                signalingLog= " -> " + pc.signalingState;
-            },
-            false
-        );
-        signalingLog = pc.signalingState;
-
-        // connect audio / video
-        pc.addEventListener("track", (evt) => {
-            console.log("Got MediaStreamTrack:", evt.track, "from receiver:", evt.receiver, new Date().getTime() - startTime);
-            if (evt.track.kind == "video")
-                localVideoRef.current.srcObject = evt.streams[0];
-        });
-        return pc;
+    console.log("RTCPeerConnection configuration:", config);
+    try {
+      pc = new RTCPeerConnection(config);
+    } catch (e) {
+      setLoader(false)
+      console.error("Error creating RTCPeerConnection", e);
+      alert("Error creating RTCPeerConnection" + e);
+      //document.getElementById("start").style.display = "inline-block";
+      return;
     }
-    function negotiate() {
-        console.log("2 Negotiating", new Date().getTime() - startTime);
-        return pc
-          .createOffer()
-          .then((offer) => {
-            console.log("2 Setting local description", new Date().getTime() - startTime);
-            return pc.setLocalDescription(offer);
-          })
-          .then(() => {
-            console.log("2 Negotiation complete", new Date().getTime() - startTime);
-            var offer = pc.localDescription;
-      
-            offer_sdp = offer.sdp;
-            console.log("2 Sending offer to server", new Date().getTime() - startTime);
-            return fetch("http://localhost:8080/api/offer-fr/", {
-              body: JSON.stringify({
-                sdp: offer.sdp,
-                type: offer.type,
-                action: 'edges',
-              }),
-              headers: {
-                "Content-Type": "application/json",
-              },
-              method: "POST",
-            });
-          })
-          .then((response) => {
-            console.log("2 Got answer from server", new Date().getTime() - startTime);
-            return response.json();
-          })
-          .then((answer) => {
-            console.log("Setting remote description");
-            answer_sdp = answer.sdp;
-            return pc.setRemoteDescription(answer);
-          })
-          .catch((e) => {
-            alert(e);
-          });
-      }
-    const handleStartCall = async () => {
+    if (!pc) {
+      setLoader(false)
+      console.error("Failed to create RTCPeerConnection");
+      alert("Failed to create RTCPeerConnection");
+      //document.getElementById("start").style.display = "inline-block";
+      return;
+    }
+    console.log("RTCPeerConnection created", new Date().getTime() - startTime);
 
-        startTime = new Date().getTime();
-        // document.getElementById("start").style.display = "none";
-      
-        console.log("1 Starting call", new Date().getTime() - startTime);
-        const pc = createPeerConnection();
-        console.log("1.1 Peer connection created", new Date().getTime() - startTime);
-        console.log("pc.iceConnectionState",pc.iceConnectionState, new Date().getTime() - startTime);
-        console.log("pc.iceGatheringState",pc.iceGatheringState, new Date().getTime() - startTime);
-        console.log("pc.signalingState",pc.signalingState, new Date().getTime() - startTime);
-      
-        var time_start = null;
-      
-        const current_stamp = () => {
-          if (time_start === null) {
-            time_start = new Date().getTime();
-            return 0;
-          } else {
-            return new Date().getTime() - time_start;
-          }
-        };
-      
-
-          var parameters = {"ordered": true};
-      
-         const  dc = pc.createDataChannel("chat", parameters);
-          dc.addEventListener("close", () => {
-            clearInterval(dcInterval);
-            dataChannelLog= "- close\n";
-          });
-          dc.addEventListener("open", () => {
-            dataChannelLog= "- open\n";
-            dcInterval = setInterval(() => {
-              var message = "ping " + current_stamp();
-              dataChannelLog= "> " + message + "\n";
-              dc.send(message);
-            }, 1000);
-          });
-          dc.addEventListener("message", (evt) => {
-            dataChannelLog= "< " + evt.data + "\n";
-      
-            if (evt.data.substring(0, 4) === "pong") {
-              var elapsed_ms = current_stamp() - parseInt(evt.data.substring(5), 10);
-              dataChannelLog= " RTT " + elapsed_ms + " ms\n";
-            }
-          });
-        
-      
-        // Build media constraints.
-      
-        const constraints = {
-          audio: false,
-          video: false,
-        };
-      
-       
-          const videoConstraints = {};
-    
-          videoConstraints.frameRate = 10;
-      
-          constraints.video = Object.keys(videoConstraints).length
-            ? videoConstraints
-            : true;
-        
-      
-        // Acquire media and start negociation.
-      
-        if (constraints.audio || constraints.video) {
-          if (constraints.video) {
-            // document.getElementById("media").style.display = "block";
-          }
-          navigator.mediaDevices.getUserMedia(constraints).then(
-            
-            (stream) => {
-              console.log("pc.iceConnectionState",pc.iceConnectionState, new Date().getTime() - startTime);
-              console.log("pc.iceGatheringState",pc.iceGatheringState, new Date().getTime() - startTime);
-              console.log("pc.signalingState",pc.signalingState, new Date().getTime() - startTime);
-              stream.getTracks().forEach((track) => {
-                pc.addTrack(track, stream);
-              });
-              console.log("1.1 Media acquired", new Date().getTime() - startTime);
-              return negotiate();
-            },
-            (err) => {
-              alert("Could not acquire media: " + err);
-            }
-          );
-        } else {
-          console.log("1.1 No media selected", new Date().getTime() - startTime);
-          negotiate();
-        }
-        console.log("Call started", new Date().getTime() - startTime);
-        // document.getElementById("stop").style.display = "inline-block";
-    };
-
-    const handleAnswerCall = async (sdp) => {
-        setIsCalling(true);
-
-        const pc = new RTCPeerConnection(configuration);
-        setPeerConnection(pc);
-
-        pc.onicecandidate = (event) => {
-            if (event.candidate) {
-                // Send ICE candidate to signaling server (implementation needed)
-                console.log('Sending ICE candidate:', event.candidate);
-            }
-        };
-
-        pc.onaddstream = (event) => {
-            setRemoteStream(event.stream);
-            remoteVideoRef.current.srcObject = event.stream;
-        };
-
-        await pc.setRemoteDescription(sdp);
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-
-        // Send answer to signaling server (implementation needed)
-        console.log('Created answer:', answer);
-    };
-
-    const handleStopCall = async () => {
-        setIsCalling(false);
-
-        localStream.getTracks().forEach((track) => track.stop());
-        remoteStream?.getTracks().forEach((track) => track.stop());
-
-        peerConnection?.close();
-        setPeerConnection(null);
-        setRemoteStream(null);
-    };
-
-    return (
-        <div>
-            <video ref={localVideoRef} autoPlay muted width={320} height={240} />
-            <video ref={remoteVideoRef} autoPlay width={320} height={240} />
-            <div id='textContent'></div>
-            <div id='iceConnectionLog'>{iceConnectionLog}</div>
-            <div id='iceGatheringLog'>{iceGatheringLog}</div>
-            <div id=''>{signalingLog}</div>
-            <div id=''>{dataChannelLog}</div>
-            <div id=''>{offer_sdp}</div>
-            <div id=''>{answer_sdp}</div>
-            {isCalling ? (
-                <button onClick={handleStopCall}>Stop Call</button>
-            ) : (
-                <button onClick={handleStartCall}>Start Call</button>
-            )}
-        </div>
+    // register some listeners to help debugging
+    pc.addEventListener(
+      "icegatheringstatechange",
+      () => {
+        console.log(" -> ICE gathering state change to:", pc.iceGatheringState, new Date().getTime() - startTime);
+      },
+      false
     );
+
+    pc.addEventListener(
+      "iceconnectionstatechange",
+      () => {
+        console.log(" -> ICE connection state change to:", pc.iceConnectionState, new Date().getTime() - startTime);
+      },
+      false
+    );
+
+    pc.addEventListener(
+      "signalingstatechange",
+      () => {
+        console.log(" -> Signaling state change to:", pc.signalingState, new Date().getTime() - startTime);
+      },
+      false
+    );
+
+    pc.addEventListener("connectionstatechange", () => {
+      console.log(" -> Connection state change to:", pc.connectionState, new Date().getTime() - startTime);
+      if (pc.connectionState === "disconnected") {
+        //document.getElementById("media").style.display = "none";
+        if (!stopped) {
+          pc = createPeerConnection();
+        }
+      }
+    })
+
+    // not required 
+    // connect audio / video
+    pc.addEventListener("track", (evt) => {
+
+      console.log("Got MediaStreamTrack:", evt.track, "from receiver:", evt.receiver, new Date().getTime() - startTime);
+    });
+    // responce from server
+    pc.addEventListener("datachannel", (evt) => {
+      console.log("Got DataChannel:", evt.channel, new Date().getTime() - startTime);
+      dc = evt.channel;
+      dc.addEventListener("close", () => {
+        clearInterval(dcInterval2);
+        console.log("DataChannel closed", new Date().getTime() - startTime);
+      });
+      dc.addEventListener("open", () => {
+        console.log("DataChannel opened", new Date().getTime() - startTime);
+        dcInterval2 = setInterval(() => { 
+          var message = "ping data 2";
+          console.log("Sending DataChannel message:", message, new Date().getTime() - startTime);
+          dc.send(message);
+        }, 10000);
+      });
+      dc.addEventListener("message", (evt) => {
+        console.log("Got DataChannel message:", evt.data, new Date().getTime() - startTime);
+        if (evt.data.trim() === "stop") {
+          console.log("Stopping", new Date().getTime() - startTime);
+          stop()
+        }
+      });
+    });
+    pc.createDataChannel("events");
+    console.log("DataChannel created", new Date().getTime() - startTime);
+
+    return pc;
+  }
+
+  const negotiate=()=> {
+    console.log("2 Negotiating", new Date().getTime() - startTime);
+    return pc
+      .createOffer()
+      .then((offer) => {
+        console.log("2 Setting local description", new Date().getTime() - startTime);
+        return pc.setLocalDescription(offer);
+      })
+      .then(() => {
+        // wait for ICE gathering to complete
+        return new Promise((resolve) => {
+          if (pc.iceGatheringState === "complete") {
+            resolve();
+          } else {
+            function checkState() {
+              if (pc.iceGatheringState === "complete") {
+                pc.removeEventListener("icegatheringstatechange", checkState);
+                resolve();
+              }
+            }
+            pc.addEventListener("icegatheringstatechange", checkState);
+          }
+        });
+      })
+      
+      .then(() => {
+        console.log("2 Negotiation complete", new Date().getTime() - startTime);
+        var offer = pc.localDescription;
+        offer.sdp = sdpFilterCodec("video", "H264", offer.sdp);
+        console.log("2 Sending offer to server", new Date().getTime() - startTime);
+        console.log("action", action);
+        const url = action == 'face_recognition' ? "/api/offer-fr/" : "/api/v1/users/me/add-face-offer/";
+        console.log("url", url);
+        return fetch(url, {
+          body: JSON.stringify({
+            sdp: offer.sdp,
+            type: offer.type,
+            action: action,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            'credentials': 'include'
+          },
+          method: "POST",
+        });
+      })
+      .then((response) => {
+        console.log("2 Got answer from server", new Date().getTime() - startTime);
+        return response.json();
+      })
+      .then((answer) => {
+        console.log("Setting remote description");
+        console.log("answer", answer);
+        //document.getElementById("media").style.display = "block";
+        //document.getElementById("loading").style.display = "none";
+        console.log("2 Setting remote description", new Date().getTime() - startTime);
+        console.log("showing video", new Date().getTime() - startTime);
+        return pc.setRemoteDescription(answer);
+      })
+      .catch((e) => {
+        alert(e);
+      });
+  }
+  
+  const start=()=> {
+    setLoader(true);
+    //document.getElementById("loading").style.display = "block";
+    stopped = false;
+    startTime = new Date().getTime();
+    //document.getElementById("start").style.display = "none";
+    pc = createPeerConnection();
+  
+    console.log("1 Starting call", new Date().getTime() - startTime);
+    
+    console.log("1.1 Peer connection created", new Date().getTime() - startTime);
+    console.log("pc.iceConnectionState", pc.iceConnectionState, new Date().getTime() - startTime);
+    console.log("pc.iceGatheringState", pc.iceGatheringState, new Date().getTime() - startTime);
+    console.log("pc.signalingState", pc.signalingState, new Date().getTime() - startTime);
+  
+  
+    // Build media constraints.
+   
+    const constraints = {
+      audio: false,
+      video: {
+        width: {
+          min: 120,
+          ideal: 320,
+          max: 1024,
+        },
+        height: {
+          min: 120,
+          ideal: 240,
+          max: 720,
+        },
+        frameRate: {
+          min: 10,
+          ideal: 15,
+          max: 30,
+        },
+        facingMode: "user",
+      }
+    };
+  
+  
+    // Acquire media and start negociation.
+  
+    navigator.mediaDevices.getUserMedia(constraints).then(
+  
+      (stream) => {
+        console.log("pc.iceConnectionState", pc.iceConnectionState, new Date().getTime() - startTime);
+        console.log("pc.iceGatheringState", pc.iceGatheringState, new Date().getTime() - startTime);
+        console.log("pc.signalingState", pc.signalingState, new Date().getTime() - startTime);
+        stream.getTracks().forEach((track) => {
+          pc.addTrack(track, stream);
+          if (track.kind == "video") {
+            // document.getElementById("video").srcObject = stream;
+            localVideoRef.current.stream=stream;
+          }
+        });
+        console.log("1.1 Media acquired", new Date().getTime() - startTime);
+        return negotiate();
+      },
+      (err) => {
+        setLoader(false)
+        console.error("Error acquiring media:", err);
+        //document.getElementById("loading").style.display = "none";
+        //document.getElementById("start").style.display = "inline-block";
+  
+        alert("Could not acquire media: " + err);
+      }
+    );
+    setLoader(false)
+    console.log("Call started", new Date().getTime() - startTime);
+    //document.getElementById("stop").style.display = "inline-block";
+  }
+  
+  const stop=()=> {
+    stopped = true;
+    //document.getElementById("stop").style.display = "none";
+    //document.getElementById("start").style.display = "inline-block";
+    //document.getElementById("loading").style.display = "block";
+  
+    // close data channel
+    if (dc) {
+      dc.close();
+    }
+  
+    // close transceivers
+    if (pc.getTransceivers) {
+      pc.getTransceivers().forEach((transceiver) => {
+        if (transceiver.stop) {
+          transceiver.stop();
+        }
+      });
+    }
+  
+    // close local audio / video
+    pc.getSenders().forEach((sender) => {
+      sender.track.stop();
+    });
+  
+    // close peer connection
+    setTimeout(() => {
+      pc.close();
+      //document.getElementById("loading").style.display = "none";
+    }, 500);
+  }
+  
+  const sdpFilterCodec=(kind, codec, realSdp)=> {
+    var allowed = [];
+    var rtxRegex = new RegExp("a=fmtp:(\\d+) apt=(\\d+)\r$");
+    var codecRegex = new RegExp("a=rtpmap:([0-9]+) " + escapeRegExp(codec));
+    var videoRegex = new RegExp("(m=" + kind + " .*?)( ([0-9]+))*\\s*$");
+  
+    var lines = realSdp.split("\n");
+  
+    var isKind = false;
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith("m=" + kind + " ")) {
+        isKind = true;
+      } else if (lines[i].startsWith("m=")) {
+        isKind = false;
+      }
+  
+      if (isKind) {
+        var match = lines[i].match(codecRegex);
+        if (match) {
+          allowed.push(parseInt(match[1]));
+        }
+  
+        match = lines[i].match(rtxRegex);
+        if (match && allowed.includes(parseInt(match[2]))) {
+          allowed.push(parseInt(match[1]));
+        }
+      }
+    }
+  
+    var skipRegex = "a=(fmtp|rtcp-fb|rtpmap):([0-9]+)";
+    var sdp = "";
+  
+    isKind = false;
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith("m=" + kind + " ")) {
+        isKind = true;
+      } else if (lines[i].startsWith("m=")) {
+        isKind = false;
+      }
+  
+      if (isKind) {
+        var skipMatch = lines[i].match(skipRegex);
+        if (skipMatch && !allowed.includes(parseInt(skipMatch[2]))) {
+          continue;
+        } else if (lines[i].match(videoRegex)) {
+          sdp += lines[i].replace(videoRegex, "$1 " + allowed.join(" ")) + "\n";
+        } else {
+          sdp += lines[i] + "\n";
+        }
+      } else {
+        sdp += lines[i] + "\n";
+      }
+    }
+  
+    return sdp;
+  }
+  
+  const escapeRegExp=(string)=> {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  }
+  // Add functions for handling media streams (optional)
+
+  return (
+    <div>
+      <div style={{textAlign:'center',width:'100%',paddingTop:'80px'}}>
+      <span className='loader'></span>
+      </div>
+      <video ref={localVideoRef} autoPlay muted />
+      <ul>
+        {messages.map((message, index) => (
+          <li key={index}>{message}</li>
+        ))}
+      </ul>
+
+    </div>
+  );
+
 }
 
-export default WebRTCVideoChat;
+export default WebRtcAuth;

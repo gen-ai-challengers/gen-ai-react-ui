@@ -42,6 +42,7 @@ export default function SignUp(onSignUp) {
     confirmpassword: '',
   });
   useEffect(() => {
+    console.log(signUpTriggered);
     if(signUpTriggered){
       handleSubmit();
     }
@@ -49,7 +50,9 @@ export default function SignUp(onSignUp) {
   const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
+  
     setFormData({ ...formData, [event.target.name]: event.target.value });
+    console.log(formData)
   };
 
   const validate = () => {
@@ -67,13 +70,13 @@ export default function SignUp(onSignUp) {
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = () => {
-      debugger;
+      
     if (validate()) {
       // Submit form data (e.g., send to server)
       console.log('Form submitted successfully!', formData);
-      dispatch(signUpSuccess({id:1})); return;
+      // dispatch(signUpSuccess({id:1}));
       const body = {
-                phone: formData.name,
+                phone: formData.phone,
                 name: formData.name,
                 password: formData.password
             }
@@ -120,6 +123,7 @@ export default function SignUp(onSignUp) {
           placeholder="John"
           autoComplete="first name"
           required
+          onChange={handleChange}
         />
       </FormGrid>
       <FormGrid item xs={12} md={6}>
@@ -244,6 +248,7 @@ export default function SignUp(onSignUp) {
           placeholder="Phone"
           autoComplete="shipping country"
           required
+          onChange={handleChange}
         />
       </FormGrid>
       <FormGrid item xs={6}>
@@ -259,6 +264,7 @@ export default function SignUp(onSignUp) {
           placeholder="12345"
           autoComplete="shipping postal-code"
           required
+          onChange={handleChange}
         />
         <FormHelperText sx={{ color: 'errors.main' }}>{errors.password ? errors.password : ''}</FormHelperText>
       </FormGrid>

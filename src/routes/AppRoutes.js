@@ -10,7 +10,8 @@ import DefaultLayout from "../layout/default/DefaultLayout";
 import Checkout from "../checkout/Checkout";
 import SignUpLayout from '../auth/signup/signUpLayout';
 import AntMedia from '../components/antmedia/AntMedia';
-import WebRTCVideoChat from '../components/webRtc';
+import WebRTCVideoChat from '../components/webRtcOld';
+import WebRtcAuth from '../components/webRtc';
 import CatelogueHome from '../catalogue/catalogueHome';
 import MediaPipe1 from '../components/mediaPipe1';
 // import Contact from './components/Contact';
@@ -18,19 +19,21 @@ import MediaPipe1 from '../components/mediaPipe1';
 const router = createBrowserRouter([
   { path: '/sign-up', element: <SignUpLayout /> },
   { path: '/ant-media', element: <AntMedia /> },
+  { path: '/', element: <SignIn /> },
   {
     path: '/',
     element: <DefaultLayout />, // Wrap root path with Layout
     children: [
-      { path: '/', element: <WebRTCVideoChat /> },
+      { path: '/home', element: <SignIn /> },
       // { path: '/add-face', element: <AddFace /> },
       // { path: '/about', element: <ModelTrainer /> },
       // Add more child routes here
     ],
   },
-  { path: '/babylon', element: <CatelogueHome /> },
+  { path: '/catalogue', element: <CatelogueHome /> },
   { path: '/checkout', element: <Checkout /> },
   { path: '/mediapipe', element: <MediaPipe1 /> },
+  { path: '/webrtc1', element: <WebRtcAuth /> },
 ]);
 const AppRoutes = () => {
   return (

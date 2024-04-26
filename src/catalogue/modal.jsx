@@ -1,62 +1,154 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { styled, css } from '@mui/system';
-import { Modal as BaseModal } from '@mui/base/Modal';
+import React, { useRef, useEffect } from 'react';
+import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI, AxesViewer } from 'babylonjs';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import '@babylonjs/loaders'; // Register loaders
+import "@babylonjs/core/Loading/loadingScreen";
+import "@babylonjs/loaders/glTF";
+import "@babylonjs/core/Materials/standardMaterial";
+import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
+import "@babylonjs/core/Animations/animatable"
+import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import {
+  Unstable_NumberInput as BaseNumberInput,
+  NumberInputProps,
+  numberInputClasses,
+} from '@mui/base/Unstable_NumberInput';
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
-export default function ModalUnstyled() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+const NumberInput = React.forwardRef(function CustomNumberInput(
+  props,
+  ref,
+) {
   return (
-    <div>
-      <TriggerButton type="button" onClick={handleOpen}>
-        Open modal
-      </TriggerButton>
-      <Modal
-        aria-labelledby="unstyled-modal-title"
-        aria-describedby="unstyled-modal-description"
-        open={open}
-        onClose={handleClose}
-        slots={{ backdrop: StyledBackdrop }}
-      >
-        <ModalContent sx={{ width: 400 }}>
-          <h2 id="unstyled-modal-title" className="modal-title">
-            Text in a modal
-          </h2>
-          <p id="unstyled-modal-description" className="modal-description">
-            Aliquid amet deserunt earum!
-          </p>
-        </ModalContent>
-      </Modal>
-    </div>
-  );
-}
-
-const Backdrop = React.forwardRef((props, ref) => {
-  const { open, className, ...other } = props;
-  return (
-    <div
-      className={clsx({ 'base-Backdrop-open': open }, className)}
+    <BaseNumberInput
+      slots={{
+        root: InputRoot,
+        input: InputElement,
+        incrementButton: Button,
+        decrementButton: Button,
+      }}
+      slotProps={{
+        incrementButton: {
+          children: <span className="arrow">▴</span>,
+        },
+        decrementButton: {
+          children: <span className="arrow">▾</span>,
+        },
+      }}
+      {...props}
       ref={ref}
-      {...other}
     />
   );
 });
+export default function ModalPreview(props) {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [selectedProduct, setSelectedProduct] = React.useState(false);
+  const canvasPreviewRef = useRef(null);
+  useEffect(() => {
+    console.log('props', props)
+    if (props.product) {
+      setSelectedProduct(props.product);
+    }
+    // Create Babylon.js engine and scene
+    const engine = new Engine(canvasPreviewRef.current, true);
+    const scene = new Scene(engine);
+    // var axes = new AxesViewer(scene, 2);
+    scene.onPointerDown = (evt) => {
+      if (evt.button === 0) engine.enterPointerlock();
+      if (evt.button === 1) engine.exitPointerlock();
+    };
 
-Backdrop.propTypes = {
-  className: PropTypes.string.isRequired,
-  open: PropTypes.bool,
-};
+    const framesPerSecond = 60;
+    const gravity = -9.81;
+    scene.gravity = new Vector3(0, gravity / framesPerSecond, 0);
+    scene.collisionsEnabled = true;
+    const camera = new FreeCamera('camera1', new Vector3(8, 5, 20), scene);
+    camera.setTarget(Vector3.Zero());
+    camera.attachControl();
+    camera.speed = 0.1;
+    // CreateEnvironment(scene, camera);
+    const light = new HemisphericLight('light1', new Vector3(1, 1, 2), scene);
+    light.intensity = 1;
+    if (selectedProduct) {
+      const bag2 = SceneLoader.ImportMesh(null, "./models/store/", selectedProduct.key + ".glb", scene, function (newMeshes) {
+        newMeshes[0].getChildMeshes()[0].metadata = selectedProduct.key;
+        const importedMesh = newMeshes[0];
+        importedMesh.position.set(selectedProduct.position.x - 2, selectedProduct.position.y - 8, selectedProduct.position.z - 2);
+        importedMesh.rotation.x = selectedProduct.rotation;
+        // importedMesh.scaling = new Vector3(mesh.scaling.x, mesh.scaling.y, mesh.scaling.z);
+        importedMesh.scaling = new Vector3(10, 10, 10);
+      });
+    }
+    engine.runRenderLoop(() => {
+      scene.render();
+    });
+    return () => {
+      engine.dispose();
+    };
+  }, [props, selectedProduct]);
+  return (
+    <div>
+      <span> </span>
+      <Box sx={{ flexGrow: 1 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <h3>{selectedProduct.name}</h3>
+            <h2>${selectedProduct.price}</h2>
+            <Grid item xs={12}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+              }}
+            >
+              <NumberInput
+                startAdornment={
+                  <InputAdornment>
+                  </InputAdornment>
+                }
+              />
+            </Box>
+          </Grid>
+          </Grid>
+          <Grid item xs={8}>
+            <canvas ref={canvasPreviewRef} style={{ width: '100%', height: '300px' }} />
+          </Grid>
+        </Grid>
+      </Box>
+    </div>
+  );
+}
+const InputAdornment = styled('div')(
+  ({ theme }) => `
+  margin: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  grid-row: 1/3;
+  color: ${theme.palette.mode === 'dark' ? grey[500] : grey[700]};
+`,
+);
 
 const blue = {
-  200: '#99CCFF',
-  300: '#66B2FF',
+  100: '#DAECFF',
+  200: '#B6DAFF',
   400: '#3399FF',
   500: '#007FFF',
   600: '#0072E5',
-  700: '#0066CC',
+  700: '#0059B2',
+  900: '#003A75',
 };
 
 const grey = {
@@ -72,84 +164,124 @@ const grey = {
   900: '#1C2025',
 };
 
-const Modal = styled(BaseModal)`
-  position: fixed;
-  z-index: 1300;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const InputRoot = styled('div')(
+  ({ theme }) => `
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  border-radius: 8px;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
+    };
+  display: grid;
+  grid-template-columns: auto 1fr auto 19px;
+  grid-template-rows: 1fr 1fr;
+  overflow: hidden;
+  padding: 4px;
 
-const StyledBackdrop = styled(Backdrop)`
-  z-index: -1;
-  position: fixed;
-  inset: 0;
-  background-color: rgb(0 0 0 / 0.5);
-  -webkit-tap-highlight-color: transparent;
-`;
+  &.${numberInputClasses.focused} {
+    border-color: ${blue[400]};
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
+  }
 
-const ModalContent = styled('div')(
-  ({ theme }) => css`
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 500;
-    text-align: start;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow: hidden;
-    background-color: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border-radius: 8px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    box-shadow: 0 4px 12px
-      ${theme.palette.mode === 'dark' ? 'rgb(0 0 0 / 0.5)' : 'rgb(0 0 0 / 0.2)'};
-    padding: 24px;
-    color: ${theme.palette.mode === 'dark' ? grey[50] : grey[900]};
+  &:hover {
+    border-color: ${blue[400]};
+  }
 
-    & .modal-title {
-      margin: 0;
-      line-height: 1.5rem;
-      margin-bottom: 8px;
-    }
-
-    & .modal-description {
-      margin: 0;
-      line-height: 1.5rem;
-      font-weight: 400;
-      color: ${theme.palette.mode === 'dark' ? grey[400] : grey[800]};
-      margin-bottom: 4px;
-    }
-  `,
+  // firefox
+  &:focus-visible {
+    outline: 0;
+  }
+`,
 );
 
-const TriggerButton = styled('button')(
-  ({ theme }) => css`
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    padding: 8px 16px;
-    border-radius: 8px;
-    transition: all 150ms ease;
+const InputElement = styled('input')(
+  ({ theme }) => `
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  grid-row: 1/3;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  background: inherit;
+  border: none;
+  border-radius: inherit;
+  padding: 8px 12px;
+  outline: 0;
+`,
+);
+
+const Button = styled('button')(
+  ({ theme }) => `
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  appearance: none;
+  padding: 0;
+  width: 19px;
+  height: 20px;
+  font-family: system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1;
+  box-sizing: border-box;
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 0;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 120ms;
+
+  &:hover {
+    background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
+    border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
     cursor: pointer;
-    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  }
+
+  &.${numberInputClasses.incrementButton} {
+    grid-column: 4/5;
+    grid-row: 1/2;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border: 1px solid;
+    border-bottom: 0;
+    border-color: ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
     color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 
     &:hover {
-      background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-      border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
+      cursor: pointer;
+      color: #FFF;
+      background: ${theme.palette.mode === 'dark' ? blue[600] : blue[500]};
+      border-color: ${theme.palette.mode === 'dark' ? blue[400] : blue[600]};
     }
+  }
 
-    &:active {
-      background: ${theme.palette.mode === 'dark' ? grey[700] : grey[100]};
-    }
+  &.${numberInputClasses.decrementButton} {
+    grid-column: 4/5;
+    grid-row: 2/3;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border: 1px solid;
+    border-color: ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
 
-    &:focus-visible {
-      box-shadow: 0 0 0 4px ${theme.palette.mode === 'dark' ? blue[300] : blue[200]};
-      outline: none;
+    &:hover {
+      cursor: pointer;
+      color: #FFF;
+      background: ${theme.palette.mode === 'dark' ? blue[600] : blue[500]};
+      border-color: ${theme.palette.mode === 'dark' ? blue[400] : blue[600]};
     }
-  `,
+  }
+
+  & .arrow {
+    transform: translateY(-1px);
+  }
+
+  & .arrow {
+    transform: translateY(-1px);
+  }
+`,
 );

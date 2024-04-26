@@ -25,7 +25,7 @@ import SignUp from './signUp';
 import Addface from './addFace';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectUser, signUpClicked,selectSignUpSuccess } from '../authSlice';
-
+import WebRtcAuth from '../../components/webRtc';
 interface ToggleCustomThemeProps {
   showCustomTheme: Boolean;
   toggleCustomTheme: () => void;
@@ -57,7 +57,7 @@ function getStepContent(step: number) {
     case 0:
       return <SignUp />; // first component
     case 1:
-      return <Addface />; // second component
+      return <WebRtcAuth action='face_addition' />; // second component
     default:
       throw new Error('Unknown step');
   }
