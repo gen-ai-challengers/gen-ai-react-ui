@@ -231,7 +231,7 @@ export default function SignUp(onSignUp) {
           name="email"
           error={!!errors.email}
           type="email"
-          placeholder="12345"
+          placeholder="abc@example.com"
           autoComplete="shipping postal-code"
           required
         />

@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { faceAddSuccess } from '../auth/authSlice';
 import './loader.css';
+import * as faceapi from 'face-api.js';
 const WEBRTC_CONFIG = {
   sdpSemantics: "unified-plan",
   iceServers: [
@@ -12,6 +16,7 @@ const WEBRTC_CONFIG = {
 };
 
 function WebRtcAuth(props) {
+  const navigate = useNavigate();
   const [localConnection, setLocalConnection] = useState(null);
   const [remoteConnection, setRemoteConnection] = useState(null);
   const [dataChannel, setDataChannel] = useState(null);
@@ -20,6 +25,9 @@ function WebRtcAuth(props) {
   const [loader, setLoader] = useState(false);
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const canvasRef = useRef(null);
+  const dispatch = useDispatch();
   var pc = null;
   var startTime;
   var dc = null;
@@ -30,7 +38,7 @@ function WebRtcAuth(props) {
   console.log(props)
   const myStyle = {
     width: '48px',
-    height:' 48px',
+    height: ' 48px',
     display: 'inline-block',
     position: 'relative',
     color: 'red',
@@ -40,6 +48,7 @@ function WebRtcAuth(props) {
   };
   useEffect(() => {
     start();
+    setIsPlaying(true);
   }, []);
 
   const createPeerConnection = () => {
@@ -124,13 +133,17 @@ function WebRtcAuth(props) {
       });
       dc.addEventListener("open", () => {
         console.log("DataChannel opened", new Date().getTime() - startTime);
-        dcInterval2 = setInterval(() => { 
+        dcInterval2 = setInterval(() => {
           var message = "ping data 2";
           console.log("Sending DataChannel message:", message, new Date().getTime() - startTime);
           dc.send(message);
         }, 10000);
       });
       dc.addEventListener("message", (evt) => {
+        if (evt.data == "User face addedd" || evt.data == "identified") {
+          dispatch(faceAddSuccess(true))
+          navigate('/catalogue');
+        }
         console.log("Got DataChannel message:", evt.data, new Date().getTime() - startTime);
         if (evt.data.trim() === "stop") {
           console.log("Stopping", new Date().getTime() - startTime);
@@ -144,7 +157,7 @@ function WebRtcAuth(props) {
     return pc;
   }
 
-  const negotiate=()=> {
+  const negotiate = () => {
     console.log("2 Negotiating", new Date().getTime() - startTime);
     return pc
       .createOffer()
@@ -168,7 +181,7 @@ function WebRtcAuth(props) {
           }
         });
       })
-      
+
       .then(() => {
         console.log("2 Negotiation complete", new Date().getTime() - startTime);
         var offer = pc.localDescription;
@@ -207,25 +220,25 @@ function WebRtcAuth(props) {
         alert(e);
       });
   }
-  
-  const start=()=> {
+
+  const start = () => {
     setLoader(true);
     //document.getElementById("loading").style.display = "block";
     stopped = false;
     startTime = new Date().getTime();
     //document.getElementById("start").style.display = "none";
     pc = createPeerConnection();
-  
+
     console.log("1 Starting call", new Date().getTime() - startTime);
-    
+
     console.log("1.1 Peer connection created", new Date().getTime() - startTime);
     console.log("pc.iceConnectionState", pc.iceConnectionState, new Date().getTime() - startTime);
     console.log("pc.iceGatheringState", pc.iceGatheringState, new Date().getTime() - startTime);
     console.log("pc.signalingState", pc.signalingState, new Date().getTime() - startTime);
-  
-  
+
+
     // Build media constraints.
-   
+
     const constraints = {
       audio: false,
       video: {
@@ -247,12 +260,12 @@ function WebRtcAuth(props) {
         facingMode: "user",
       }
     };
-  
-  
+
+
     // Acquire media and start negociation.
-  
+
     navigator.mediaDevices.getUserMedia(constraints).then(
-  
+
       (stream) => {
         console.log("pc.iceConnectionState", pc.iceConnectionState, new Date().getTime() - startTime);
         console.log("pc.iceGatheringState", pc.iceGatheringState, new Date().getTime() - startTime);
@@ -261,7 +274,7 @@ function WebRtcAuth(props) {
           pc.addTrack(track, stream);
           if (track.kind == "video") {
             // document.getElementById("video").srcObject = stream;
-            localVideoRef.current.stream=stream;
+            localVideoRef.current.stream = stream;
           }
         });
         console.log("1.1 Media acquired", new Date().getTime() - startTime);
@@ -272,7 +285,7 @@ function WebRtcAuth(props) {
         console.error("Error acquiring media:", err);
         //document.getElementById("loading").style.display = "none";
         //document.getElementById("start").style.display = "inline-block";
-  
+
         alert("Could not acquire media: " + err);
       }
     );
@@ -280,18 +293,18 @@ function WebRtcAuth(props) {
     console.log("Call started", new Date().getTime() - startTime);
     //document.getElementById("stop").style.display = "inline-block";
   }
-  
-  const stop=()=> {
+
+  const stop = () => {
     stopped = true;
     //document.getElementById("stop").style.display = "none";
     //document.getElementById("start").style.display = "inline-block";
     //document.getElementById("loading").style.display = "block";
-  
+
     // close data channel
     if (dc) {
       dc.close();
     }
-  
+
     // close transceivers
     if (pc.getTransceivers) {
       pc.getTransceivers().forEach((transceiver) => {
@@ -300,27 +313,27 @@ function WebRtcAuth(props) {
         }
       });
     }
-  
+
     // close local audio / video
     pc.getSenders().forEach((sender) => {
       sender.track.stop();
     });
-  
+
     // close peer connection
     setTimeout(() => {
       pc.close();
       //document.getElementById("loading").style.display = "none";
     }, 500);
   }
-  
-  const sdpFilterCodec=(kind, codec, realSdp)=> {
+
+  const sdpFilterCodec = (kind, codec, realSdp) => {
     var allowed = [];
     var rtxRegex = new RegExp("a=fmtp:(\\d+) apt=(\\d+)\r$");
     var codecRegex = new RegExp("a=rtpmap:([0-9]+) " + escapeRegExp(codec));
     var videoRegex = new RegExp("(m=" + kind + " .*?)( ([0-9]+))*\\s*$");
-  
+
     var lines = realSdp.split("\n");
-  
+
     var isKind = false;
     for (var i = 0; i < lines.length; i++) {
       if (lines[i].startsWith("m=" + kind + " ")) {
@@ -328,23 +341,23 @@ function WebRtcAuth(props) {
       } else if (lines[i].startsWith("m=")) {
         isKind = false;
       }
-  
+
       if (isKind) {
         var match = lines[i].match(codecRegex);
         if (match) {
           allowed.push(parseInt(match[1]));
         }
-  
+
         match = lines[i].match(rtxRegex);
         if (match && allowed.includes(parseInt(match[2]))) {
           allowed.push(parseInt(match[1]));
         }
       }
     }
-  
+
     var skipRegex = "a=(fmtp|rtcp-fb|rtpmap):([0-9]+)";
     var sdp = "";
-  
+
     isKind = false;
     for (var i = 0; i < lines.length; i++) {
       if (lines[i].startsWith("m=" + kind + " ")) {
@@ -352,7 +365,7 @@ function WebRtcAuth(props) {
       } else if (lines[i].startsWith("m=")) {
         isKind = false;
       }
-  
+
       if (isKind) {
         var skipMatch = lines[i].match(skipRegex);
         if (skipMatch && !allowed.includes(parseInt(skipMatch[2]))) {
@@ -366,21 +379,81 @@ function WebRtcAuth(props) {
         sdp += lines[i] + "\n";
       }
     }
-  
+
     return sdp;
   }
-  
-  const escapeRegExp=(string)=> {
+
+  const escapeRegExp = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
   }
   // Add functions for handling media streams (optional)
+  const handleVideoOnPlay = () => { 
+    setInterval(async () => {
+      if (canvasRef && canvasRef.current && videoRef && videoRef.current) {
+        canvasRef.current.innerHTML = faceapi.createCanvasFromMedia(videoRef.current);
+        const displaySize = {
+          width: videoWidth,
+          height: videoHeight
+        }
 
+        faceapi.matchDimensions(canvasRef.current, displaySize);
+
+        const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+        if (!canvasRef.current || !videoRef.current) {
+          return;
+        }
+        if (detections) {
+        const resizedDetections = faceapi.resizeResults(detections, displaySize);
+        canvasRef && canvasRef.current && canvasRef.current.getContext('2d').clearRect(0, 0, videoWidth, videoHeight);
+        canvasRef && canvasRef.current && faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+        // canvasRef && canvasRef.current && faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+        // canvasRef && canvasRef.current && faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+      
+          const dims = faceapi.matchDimensions(canvasRef.current, videoRef.current, true);
+          const resizeResults = faceapi.resizeResults(detections, dims);
+      
+          const facesWithHighScore = resizeResults.filter(
+            (data) => data.detection.score > 0.7
+          );
+      
+          if (facesWithHighScore.length > 0) {
+            if (facesWithHighScore.length > 1) {
+              console.log("multipleFacesDetected");
+            } else {
+              const faceData = JSON.parse(JSON.stringify(facesWithHighScore[0]));
+              faceData.score = facesWithHighScore[0].detection.score;
+              delete faceData.detection;
+              faceData.videoRef = videoRef;
+              faceData.canvasRef = canvasRef;
+              console.log("faceDetected", faceData);
+            }
+          }
+          faceapi.draw.drawDetections(canvasRef.current, facesWithHighScore);
+        }
+      }
+    }, 100)
+  }
   return (
     <div>
-      <div style={{textAlign:'center',width:'100%',paddingTop:'80px'}}>
+      {/* <div style={{textAlign:'center',width:'100%',paddingTop:'80px'}}>
       <span className='loader'></span>
-      </div>
+      </div> */}
       <video ref={localVideoRef} autoPlay muted />
+      <canvas
+        ref={canvasRef}
+        className="output_canvas"
+        style={{
+          position: "relative",
+          marginLeft: "auto",
+          marginRight: "auto",
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          zindex: 9,
+          width: 640,
+          height: 480,
+        }}
+      ></canvas>
       <ul>
         {messages.map((message, index) => (
           <li key={index}>{message}</li>

@@ -4,7 +4,7 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://swift-shop-gen-ai-fr-uno67n3s7q-el.a.run.app/api',
+      target: 'https://shop.genai.amprajin.in/api',
       changeOrigin: true,
       headers: {
         'Access-Control-Allow-Origin': '*',

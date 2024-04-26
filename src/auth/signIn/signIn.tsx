@@ -18,8 +18,7 @@ import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import getCheckoutTheme from '../signup/components/getCheckoutTheme';
-// import AddressForm from './AddressForm';
-// import PaymentForm from './PaymentForm';
+import { useNavigate } from 'react-router-dom';
 import ToggleColorMode from '../signup/components/ToggleColorMode';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectUser, signUpClicked,selectSignUpSuccess } from '../authSlice';
@@ -50,7 +49,8 @@ function ToggleCustomTheme({
 
 
 
-export default function SignUpLayout() {
+export default function SignInLayout() {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<PaletteMode>('light');
   const [showCustomTheme, setShowCustomTheme] = useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
@@ -81,7 +81,9 @@ export default function SignUpLayout() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
-
+  const redirectToSignUp =()=>{
+    navigate('/sign-up');
+  }
   return (
     <ThemeProvider theme={showCustomTheme ? checkoutTheme : defaultTheme}>
       <CssBaseline />
@@ -113,10 +115,10 @@ export default function SignUpLayout() {
             <Button
               startIcon={<ArrowBackRoundedIcon />}
               component="a"
-              href="/material-ui/getting-started/templates/"
+              onClick={redirectToSignUp}
               sx={{ ml: '-8px' }}
             >
-              Swift Shop GenAI
+              Swift Shop GenAI-Sign Up
             </Button>
           </Box>
           <Box

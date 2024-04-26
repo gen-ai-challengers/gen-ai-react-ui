@@ -55,7 +55,9 @@ const authSlice = createSlice({
       state.user = action.payload;
     },
     faceAddSuccess(state, action) {
-      state.faceAddSuccess = true;
+      state.isSignUp = false;
+      state.isOtpSuccuss = false;
+      state.isFaceAdded = true;
     },
     signUpError(state, action) { // Optional: Handle signup errors
       state.signUpError = action.payload;
@@ -66,7 +68,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, signUpSuccess, faceAddError, signUpClicked,faceRecognitionConfirm } = authSlice.actions
+export const { loginSuccess, signUpSuccess, faceAddError, signUpClicked,faceRecognitionConfirm,faceAddSuccess } = authSlice.actions
 export const selectUser = (state) => state.auth.user;
 export const selectSignUpSuccess = (state) => state.auth.isSignUp;
 export const SignUpClicked = (state) => state.auth.isSignUpClicked;

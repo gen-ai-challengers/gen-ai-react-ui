@@ -71,7 +71,9 @@ const CatelogueHome = () => {
     importPromise.then((result) => {
       //// Result has meshes, particleSystems, skeletons, animationGroups and transformNodes
     });
-
+    const secondMesh = await SceneLoader.ImportMeshAsync("", "./models/store/", "dotumal_womens_clothing.glb", scene);
+    const mesh = secondMesh.meshes[0];
+    mesh.position.set(2, 0, 0);
     const glass = SceneLoader.ImportMesh(null, "./models/store/", "kallax_shelf.glb", scene, function (newMeshes) {
       newMeshes[0].getChildMeshes()[0].metadata = "cannon";
       const importedMesh = newMeshes[0];
