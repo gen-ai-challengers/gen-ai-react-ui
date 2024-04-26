@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI, AxesViewer } from 'babylonjs';
+import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI, AxesViewer,CreateScreenshot } from 'babylonjs';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -61,7 +61,7 @@ export default function ModalPreview(props) {
       setSelectedProduct(props.product);
     }
     // Create Babylon.js engine and scene
-    const engine = new Engine(canvasPreviewRef.current, true);
+    const engine = new Engine(canvasPreviewRef.current, true, { preserveDrawingBuffer: true, stencil: true });
     const scene = new Scene(engine);
     // var axes = new AxesViewer(scene, 2);
     scene.onPointerDown = (evt) => {
@@ -88,6 +88,10 @@ export default function ModalPreview(props) {
         importedMesh.rotation.x = selectedProduct.rotation;
         // importedMesh.scaling = new Vector3(mesh.scaling.x, mesh.scaling.y, mesh.scaling.z);
         importedMesh.scaling = new Vector3(10, 10, 10);
+        CreateScreenshot(engine, camera, { width: 1024, height: 768 }, function(data) {
+                // data is a base64 encoded image
+          console.log(data);
+              });
       });
     }
     engine.runRenderLoop(() => {

@@ -23,6 +23,9 @@ import ToggleColorMode from '../signup/components/ToggleColorMode';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectUser, signUpClicked,selectSignUpSuccess } from '../authSlice';
 import WebRtcAuth from '../../components/webRtc';
+import FaceApi from '../../components/faceApi';
+import Divider from '@mui/material/Divider';
+
 interface ToggleCustomThemeProps {
   showCustomTheme: Boolean;
   toggleCustomTheme: () => void;
@@ -190,28 +193,7 @@ export default function SignInLayout() {
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
             </Box>
           </Box>
-          <Card
-            sx={{
-              display: { xs: 'flex', md: 'none' },
-              width: '100%',
-            }}
-          >
-            <CardContent
-              sx={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                ':last-child': { pb: 2 },
-              }}
-            >
-              <div>
-                <Typography variant="subtitle2" gutterBottom>
-                  Selected products
-                </Typography>
-              </div>
-            </CardContent>
-          </Card>
+      
           <Box
             sx={{
               display: 'flex',
@@ -222,8 +204,9 @@ export default function SignInLayout() {
               maxHeight: '720px',
               gap: { xs: 5, md: 'none' },
             }}
-          >
+          >    
                  <React.Fragment>
+                 <FaceApi action='face_recognition'/>
                 <Box
                   sx={{
                     display: 'flex',
@@ -237,16 +220,8 @@ export default function SignInLayout() {
                     mb: '60px',
                   }}
                 >
-                  <WebRtcAuth  action='face_recognition'></WebRtcAuth>
-                  <Button
-                    variant="contained"
-                    endIcon={<ChevronRightRoundedIcon />}
-                    onClick={handleNext}
-                    sx={{
-                      width: { xs: '100%', sm: 'fit-content' },
-                    }}
-                  >
-                  </Button>
+                  {/* <WebRtcAuth  action='face_recognition'></WebRtcAuth> */}
+               
                 </Box>
               </React.Fragment>
           </Box>

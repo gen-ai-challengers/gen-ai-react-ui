@@ -27,6 +27,7 @@ import Addface from './addFace';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUpSuccess, selectUser, signUpClicked,selectSignUpSuccess } from '../authSlice';
 import WebRtcAuth from '../../components/webRtc';
+import FaceApi from '../../components/faceApi';
 interface ToggleCustomThemeProps {
   showCustomTheme: Boolean;
   toggleCustomTheme: () => void;
@@ -58,7 +59,7 @@ function getStepContent(step: number) {
     case 0:
       return <SignUp />; // first component
     case 1:
-      return <WebRtcAuth action='face_addition' />; // second component
+      return <FaceApi action='face_addition' />; // second component
     default:
       throw new Error('Unknown step');
   }
@@ -70,7 +71,7 @@ export default function SignUpLayout() {
   const [showCustomTheme, setShowCustomTheme] = useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const dispatch = useDispatch();
   const signUpSaved=useSelector(selectSignUpSuccess);
   const toggleColorMode = () => {

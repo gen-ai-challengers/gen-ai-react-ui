@@ -23,7 +23,9 @@ function WebRtcAuth(props) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [loader, setLoader] = useState(false);
-  const localVideoRef = useRef(null);
+  const videoRef = useRef(null);
+  const videoHeight = 200;
+  const videoWidth = 400;
   const remoteVideoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const canvasRef = useRef(null);
@@ -48,7 +50,6 @@ function WebRtcAuth(props) {
   };
   useEffect(() => {
     start();
-    setIsPlaying(true);
   }, []);
 
   const createPeerConnection = () => {
@@ -142,7 +143,7 @@ function WebRtcAuth(props) {
       dc.addEventListener("message", (evt) => {
         if (evt.data == "User face addedd" || evt.data == "identified") {
           dispatch(faceAddSuccess(true))
-          navigate('/catalogue');
+          // navigate('/catalogue');
         }
         console.log("Got DataChannel message:", evt.data, new Date().getTime() - startTime);
         if (evt.data.trim() === "stop") {
@@ -221,7 +222,7 @@ function WebRtcAuth(props) {
       });
   }
 
-  const start = () => {
+  const start = async() => {
     setLoader(true);
     //document.getElementById("loading").style.display = "block";
     stopped = false;
@@ -274,9 +275,10 @@ function WebRtcAuth(props) {
           pc.addTrack(track, stream);
           if (track.kind == "video") {
             // document.getElementById("video").srcObject = stream;
-            localVideoRef.current.stream = stream;
+            videoRef.current.stream = stream;
           }
         });
+        setIsPlaying(true);
         console.log("1.1 Media acquired", new Date().getTime() - startTime);
         return negotiate();
       },
@@ -386,13 +388,14 @@ function WebRtcAuth(props) {
   const escapeRegExp = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
   }
+
   // Add functions for handling media streams (optional)
   return (
     <div>
       {/* <div style={{textAlign:'center',width:'100%',paddingTop:'80px'}}>
       <span className='loader'></span>
       </div> */}
-      <video ref={localVideoRef} autoPlay muted />
+      <video ref={videoRef} autoPlay muted />
       <canvas
         ref={canvasRef}
         className="output_canvas"
@@ -403,16 +406,10 @@ function WebRtcAuth(props) {
           left: 0,
           right: 0,
           textAlign: "center",
-          zindex: 9,
           width: 640,
           height: 480,
         }}
       ></canvas>
-      <ul>
-        {messages.map((message, index) => (
-          <li key={index}>{message}</li>
-        ))}
-      </ul>
 
     </div>
   );

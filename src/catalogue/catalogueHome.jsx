@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI, AxesViewer } from 'babylonjs';
+import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI, AxesViewer,CreateScreenshot } from 'babylonjs';
 
 import '@babylonjs/loaders'; // Register loaders
 import "@babylonjs/core/Loading/loadingScreen";
@@ -21,18 +21,33 @@ const CatelogueHome = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   var catalogueMeshes = [ 
-    { key: 'converse__free', position: { x: .2, y: 0, z: 0 }, scaling: { x: .1, y: .1, z: .1 }, rotation: 100, name: 'Converse Shoe', price: '1000' },
-    { key: 'dior_bolso_saddle_con_bandolera_rojo', position: { x: .2, y: 0, z: 0 }, scaling: { x: .2, y: .2, z: .2 }, rotation: 50, name: 'Red Bag', price: '1000' },
-    { key: 'helmet', position: { x: .6, y: .4, z: 0 }, scaling: { x: .3, y: .3, z: .3 }, rotation: 50, name: 'Helmet', price: '1000' },
-    { key: 'cap', position: { x: .1, y: .4, z: 0 }, scaling: { x: .1, y: .1, z: .1 }, rotation: 10, name: 'Helmet', price: '1000' },
-    { key: 'teddy_bear', position: { x: -.4, y: .5, z: .1 }, scaling: { x: .2, y:.2, z: .2 }, rotation: 50, name: 'Helmet', price: '1000' },
-    { key: 'leather_bag_v2_pbr_material', position: { x: -.2, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Helmet', price: '1000' },
-    { key: 'table_mirror', position: { x: -.2, y: .1, z: .1 }, scaling: { x: .5, y:.5, z: .5 }, rotation: 50, name: 'Helmet', price: '1000' }
+    { key: 'converse__free', position: { x: 2.25, y: 0, z: 0 }, scaling: { x: .06, y: .06, z: .06 }, rotation: 100, name: 'Converse Shoe', price: '1000' },
+    { key: 'converse__free', position: { x: 2, y: 0, z: 0 }, scaling: { x: .06, y: .06, z: .06 }, rotation: 100, name: 'Converse Shoe', price: '1000' },
+    { key: 'converse__free', position: { x: 1.6, y: 0, z: 0 }, scaling: { x: .06, y: .06, z: .06 }, rotation: 100, name: 'Converse Shoe', price: '1000' },
+    { key: 'converse__free', position: { x: 1.4, y: 0, z: 0 }, scaling: { x: .06, y: .06, z: .06 }, rotation: 100, name: 'Converse Shoe', price: '1000' },
+    { key: 'teddy_bear', position: { x: 2.25, y: .2, z: 0 }, scaling: { x: .2, y:.2, z: .2 }, rotation: 0, name: 'Teddy', price: '1000' },
+    { key: 'teddy_bear', position: { x: 2, y: .2, z: 0 }, scaling: { x: .2, y:.2, z: .2 }, rotation: 0, name: 'Teddy', price: '1000' },
+    { key: 'teddy_bear', position: { x: 1.6, y: .2, z: 0 }, scaling: { x: .2, y:.2, z: .2 }, rotation: 0, name: 'Teddy', price: '1000' },
+    { key: 'teddy_bear', position: { x: 1.4, y: .2, z: 0 }, scaling: { x: .2, y:.2, z: .2 }, rotation: 0, name: 'Teddy', price: '1000' },
+    
+    { key: 'dior_bolso_saddle_con_bandolera_rojo', position: { x: -1.3, y: 0, z: 0 }, scaling: { x: .2, y: .2, z: .2 }, rotation: 50, name: 'Red Bag 1', price: '1000' },
+    { key: 'dior_bolso_saddle_con_bandolera_rojo', position: { x: -1.6, y: 0, z: 0 }, scaling: { x: .2, y: .2, z: .2 }, rotation: 50, name: 'Red Bag 2', price: '1000' },
+    { key: 'dior_bolso_saddle_con_bandolera_rojo', position: { x: -1.9, y: 0, z: 0 }, scaling: { x: .2, y: .2, z: .2 }, rotation: 50, name: 'Red Bag 3', price: '1000' },
+    { key: 'dior_bolso_saddle_con_bandolera_rojo', position: { x: -2.3, y: 0, z: 0 }, scaling: { x: .2, y: .2, z: .2 }, rotation: 50, name: 'Red Bag 4', price: '1000' },
+    // { key: 'helmet', position: { x: .6, y: .4, z: 0 }, scaling: { x: .3, y: .3, z: .3 }, rotation: 50, name: 'Helmet', price: '1000' },
+    // { key: 'cap', position: { x: .1, y: .4, z: 0 }, scaling: { x: .1, y: .1, z: .1 }, rotation: 10, name: 'Helmet', price: '1000' },
+   
+    { key: 'leather_bag_v2_pbr_material', position: { x: -1.3, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 1', price: '6999' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -1.6, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 2', price: '265' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -1.9, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 3', price: '256' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -2.3, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 4', price: '1256' },
+    // { key: 'table_mirror', position: { x: -.2, y: .1, z: .1 }, scaling: { x: .5, y:.5, z: .5 }, rotation: 50, name: 'Helmet', price: '1000' }
   ];
   useEffect(() => {
     // Create Babylon.js engine and scene
     const engine = new Engine(canvasRef.current, true);
     const scene = new Scene(engine);
+   
     // var axes = new AxesViewer(scene, 2);
     scene.onPointerDown = (evt) => {
       if (evt.button === 0) engine.enterPointerlock();
@@ -67,35 +82,36 @@ const CatelogueHome = () => {
   }, []);
   const CreateEnvironment = async (scene, camera) => {
     const importPromise = SceneLoader.ImportMeshAsync(null, "./models/store/", "dotumal_womens_clothing.glb", scene);
-    // const importPromise = SceneLoader.ImportMeshAsync(null, "./models/babylon/", "Prototype_Level.glb", scene);
-    importPromise.then((result) => {
-      //// Result has meshes, particleSystems, skeletons, animationGroups and transformNodes
-    });
-    const secondMesh = await SceneLoader.ImportMeshAsync("", "./models/store/", "dotumal_womens_clothing.glb", scene);
-    const mesh = secondMesh.meshes[0];
-    mesh.position.set(2, 0, 0);
-    const glass = SceneLoader.ImportMesh(null, "./models/store/", "kallax_shelf.glb", scene, function (newMeshes) {
+    // // const importPromise = SceneLoader.ImportMeshAsync(null, "./models/babylon/", "Prototype_Level.glb", scene);
+    // importPromise.then((result) => {
+    //   //// Result has meshes, particleSystems, skeletons, animationGroups and transformNodes
+    // });
+    const shelf1 = SceneLoader.ImportMesh(null, "./models/store/", "kallax_shelf.glb", scene, function (newMeshes) {
       newMeshes[0].getChildMeshes()[0].metadata = "cannon";
       const importedMesh = newMeshes[0];
-      importedMesh.position.set(0, 0, 0);
+      importedMesh.position.set(-1.8, 0, 0);
       importedMesh.rotation.x = 100;
       console.log(newMeshes)
       scene.onPointerDown = function castRay() {
-        console.log('clcik')
         var ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera);
-
         var hit = scene.pickWithRay(ray);
-        if (hit.pickedMesh && hit.pickedMesh.metadata == "cannon") {
-          // createGUIButton();
-        } else {
-          handleClose();
-        }
       }
     });
-  
+    const shelf2 = SceneLoader.ImportMesh(null, "./models/store/", "kallax_shelf.glb", scene, function (newMeshes) {
+      newMeshes[0].getChildMeshes()[0].metadata = "cannon";
+      const importedMesh = newMeshes[0];
+      importedMesh.position.set(1.8, 0, 0);
+      importedMesh.rotation.x = 100;
+      console.log(newMeshes)
+      scene.onPointerDown = function castRay() {
+        var ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera);
+        var hit = scene.pickWithRay(ray);
+      }
+    });
     catalogueMeshes.forEach((mesh) => {
       const bag2 = SceneLoader.ImportMesh(null, "./models/store/", mesh.key + ".glb", scene, function (newMeshes) {
         newMeshes[0].getChildMeshes()[0].metadata = mesh.key;
+        // newMeshes[0].metadata=mesh.key;
         const importedMesh = newMeshes[0];
         importedMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
         importedMesh.rotation.x = mesh.rotation;
@@ -103,8 +119,9 @@ const CatelogueHome = () => {
         scene.onPointerDown = function castRay() {
           var ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera);
           var hit = scene.pickWithRay(ray);
-          if (hit.pickedMesh && newMeshes.find((f) => f.id == hit.pickedMesh.id)) {
-            // if (hit.pickedMesh && hit.pickedMesh.metadata == "dress") {
+          console.log(hit,newMeshes,mesh.key)
+          // if (hit.pickedMesh && newMeshes.find((f) => f.id == hit.pickedMesh.id)) {
+            if (hit.pickedMesh && hit.pickedMesh.metadata == mesh.key) {
             handleOpen();
             setSelectedProduct(mesh)
             console.log(hit.pickedMesh);
