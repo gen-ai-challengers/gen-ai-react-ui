@@ -52,7 +52,7 @@ function ToggleCustomTheme({
   );
 }
 
-const steps = ['Sign Up', 'Face Recognition'];
+const steps = ['Cart', 'Checkout'];
 
 function getStepContent(step: number) {
   switch (step) {
@@ -70,7 +70,7 @@ export default function Checkout() {
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = React.useState(2);
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));

@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import '@babylonjs/loaders'; // Register loaders
 import "@babylonjs/core/Loading/loadingScreen";
 import "@babylonjs/loaders/glTF";
@@ -11,11 +12,13 @@ import "@babylonjs/core/Materials/standardMaterial";
 import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
 import "@babylonjs/core/Animations/animatable"
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import { useNavigate } from 'react-router-dom';
 import {
   Unstable_NumberInput as BaseNumberInput,
   NumberInputProps,
   numberInputClasses,
 } from '@mui/base/Unstable_NumberInput';
+import axios from 'axios';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -55,6 +58,15 @@ export default function ModalPreview(props) {
   const handleClose = () => setOpen(false);
   const [selectedProduct, setSelectedProduct] = React.useState(false);
   const canvasPreviewRef = useRef(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    // const getImageData=()=>{
+    //   var formData = new FormData(this);
+    //   var fileInput = file;
+    //   formData.append("user_image", fileInput);
+    //   axios.post('/chat',formData)
+    // }
+  },[]);
   useEffect(() => {
     console.log('props', props)
     if (props.product) {
@@ -63,7 +75,7 @@ export default function ModalPreview(props) {
     // Create Babylon.js engine and scene
     const engine = new Engine(canvasPreviewRef.current, true, { preserveDrawingBuffer: true, stencil: true });
     const scene = new Scene(engine);
-    // var axes = new AxesViewer(scene, 2);
+    // var axes = new AxesViewer(scene, 2); 
     scene.onPointerDown = (evt) => {
       if (evt.button === 0) engine.enterPointerlock();
       if (evt.button === 1) engine.exitPointerlock();
@@ -101,6 +113,9 @@ export default function ModalPreview(props) {
       engine.dispose();
     };
   }, [props, selectedProduct]);
+  const handleCheckout=()=>{
+    navigate('/checkout');
+  }
   return (
     <div>
       <span> </span>
@@ -124,6 +139,16 @@ export default function ModalPreview(props) {
                 }
               />
             </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                textAlign:'center',
+                gap: 2,
+                paddingTop:'10px'
+              }}
+            >
+              <Button   onClick={handleCheckout} variant="contained">Checkout</Button>
+              </Box>
           </Grid>
           </Grid>
           <Grid item xs={8}>
@@ -213,79 +238,5 @@ const InputElement = styled('input')(
   border-radius: inherit;
   padding: 8px 12px;
   outline: 0;
-`,
-);
-
-const Button = styled('button')(
-  ({ theme }) => `
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  appearance: none;
-  padding: 0;
-  width: 19px;
-  height: 20px;
-  font-family: system-ui, sans-serif;
-  font-size: 0.875rem;
-  line-height: 1;
-  box-sizing: border-box;
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 0;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 120ms;
-
-  &:hover {
-    background: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-    border-color: ${theme.palette.mode === 'dark' ? grey[600] : grey[300]};
-    cursor: pointer;
-  }
-
-  &.${numberInputClasses.incrementButton} {
-    grid-column: 4/5;
-    grid-row: 1/2;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border: 1px solid;
-    border-bottom: 0;
-    border-color: ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
-    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
-
-    &:hover {
-      cursor: pointer;
-      color: #FFF;
-      background: ${theme.palette.mode === 'dark' ? blue[600] : blue[500]};
-      border-color: ${theme.palette.mode === 'dark' ? blue[400] : blue[600]};
-    }
-  }
-
-  &.${numberInputClasses.decrementButton} {
-    grid-column: 4/5;
-    grid-row: 2/3;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border: 1px solid;
-    border-color: ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-    background: ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
-    color: ${theme.palette.mode === 'dark' ? grey[200] : grey[900]};
-
-    &:hover {
-      cursor: pointer;
-      color: #FFF;
-      background: ${theme.palette.mode === 'dark' ? blue[600] : blue[500]};
-      border-color: ${theme.palette.mode === 'dark' ? blue[400] : blue[600]};
-    }
-  }
-
-  & .arrow {
-    transform: translateY(-1px);
-  }
-
-  & .arrow {
-    transform: translateY(-1px);
-  }
 `,
 );

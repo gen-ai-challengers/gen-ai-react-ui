@@ -14,11 +14,14 @@ import { styled, css } from '@mui/system';
 import { Modal as BaseModal } from '@mui/base/Modal';
 import MediaPipe1 from '../components/mediaPipe1';
 import ModalPreview from './modal';
+import axios from 'axios';
 const CatelogueHome = () => {
   const canvasRef = useRef(null);
   const [open, setOpen] = React.useState(false);
   const [selectedProduct, setSelectedProduct] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (key) =>{
+    setOpen(true);
+  } 
   const handleClose = () => setOpen(false);
   var catalogueMeshes = [ 
     { key: 'converse__free', position: { x: 2.25, y: 0, z: 0 }, scaling: { x: .06, y: .06, z: .06 }, rotation: 100, name: 'Converse Shoe', price: '1000' },
@@ -112,6 +115,7 @@ const CatelogueHome = () => {
       const bag2 = SceneLoader.ImportMesh(null, "./models/store/", mesh.key + ".glb", scene, function (newMeshes) {
         newMeshes[0].getChildMeshes()[0].metadata = mesh.key;
         // newMeshes[0].metadata=mesh.key;
+        console.log( mesh.key,newMeshes[0])
         const importedMesh = newMeshes[0];
         importedMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
         importedMesh.rotation.x = mesh.rotation;
@@ -122,7 +126,7 @@ const CatelogueHome = () => {
           console.log(hit,newMeshes,mesh.key)
           // if (hit.pickedMesh && newMeshes.find((f) => f.id == hit.pickedMesh.id)) {
             if (hit.pickedMesh && hit.pickedMesh.metadata == mesh.key) {
-            handleOpen();
+            handleOpen(mesh.key);
             setSelectedProduct(mesh)
             console.log(hit.pickedMesh);
             return;
