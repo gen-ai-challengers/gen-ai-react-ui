@@ -14,6 +14,7 @@ import WebRTCVideoChat from '../components/webRtcOld';
 import WebRtcAuth from '../components/webRtc';
 import CatelogueHome from '../catalogue/catalogueHome';
 import MediaPipe1 from '../components/mediaPipe1';
+import GenAiChat from '../GenAiChat';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
 const router = createBrowserRouter([
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
   { path: '/checkout', element: <Checkout /> },
   { path: '/mediapipe', element: <MediaPipe1 /> },
   { path: '/webrtc1', element: <WebRtcAuth /> },
+  { path: '/gen-ai-chat', element: <GenAiChat /> },
 ]);
 const AppRoutes = () => {
   return (

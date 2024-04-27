@@ -15,9 +15,13 @@ import { Modal as BaseModal } from '@mui/base/Modal';
 import MediaPipe1 from '../components/mediaPipe1';
 import ModalPreview from './modal';
 import axios from 'axios';
+import { Box, Grid } from '@mui/material';
+import  GenAiChat from '../GenAiChat';
+import './Chat.css';
 const CatelogueHome = () => {
   const canvasRef = useRef(null);
   const [open, setOpen] = React.useState(false);
+  const [chatWindow, setChatWindow] = React.useState(false);
   const [selectedProduct, setSelectedProduct] = React.useState(false);
   const handleOpen = (key) =>{
     setOpen(true);
@@ -40,10 +44,10 @@ const CatelogueHome = () => {
     // { key: 'helmet', position: { x: .6, y: .4, z: 0 }, scaling: { x: .3, y: .3, z: .3 }, rotation: 50, name: 'Helmet', price: '1000' },
     // { key: 'cap', position: { x: .1, y: .4, z: 0 }, scaling: { x: .1, y: .1, z: .1 }, rotation: 10, name: 'Helmet', price: '1000' },
    
-    { key: 'leather_bag_v2_pbr_material', position: { x: -1.3, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 1', price: '6999' },
-    { key: 'leather_bag_v2_pbr_material', position: { x: -1.6, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 2', price: '265' },
-    { key: 'leather_bag_v2_pbr_material', position: { x: -1.9, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 3', price: '256' },
-    { key: 'leather_bag_v2_pbr_material', position: { x: -2.3, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Bag 4', price: '1256' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -1.3, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Leather Bag', price: '6999' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -1.6, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Leather Bag', price: '265' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -1.9, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Leather Bag', price: '256' },
+    { key: 'leather_bag_v2_pbr_material', position: { x: -2.3, y: .4, z: .1 }, scaling: { x: .3, y:.3, z: .3 }, rotation: 50, name: 'Leather Bag', price: '1256' },
     // { key: 'table_mirror', position: { x: -.2, y: .1, z: .1 }, scaling: { x: .5, y:.5, z: .5 }, rotation: 50, name: 'Helmet', price: '1000' }
   ];
   useEffect(() => {
@@ -146,6 +150,11 @@ const CatelogueHome = () => {
   return (
     <div>
       <canvas ref={canvasRef} style={{ width: '100%', height: '900px' }} />
+      {/* {chatWindow(
+      <div className='chat-window'>
+        <GenAiChat/>
+      </div>)
+      }  */}
       <Modal
         aria-labelledby="unstyled-modal-title"
         aria-describedby="unstyled-modal-description"
@@ -153,7 +162,7 @@ const CatelogueHome = () => {
         onClose={handleClose}
         slots={{ backdrop: StyledBackdrop }}
       >
-        <ModalContent sx={{ width: 400,height:300 }}>
+        <ModalContent sx={{ width: 800,height:400 }}>
           <ModalPreview product={selectedProduct}/>
         </ModalContent>
       </Modal>
