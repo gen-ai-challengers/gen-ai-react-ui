@@ -347,8 +347,8 @@ function FaceApi(props) {
   }
   //WEB RTC========================
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2px' }}>
+    <>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '2px',width: '100%' }}>
         {
           captureVideo && modelsLoaded ? <Button onClick={closeWebcam} variant="outlined" startIcon={<NoPhotographyIcon />}>
           </Button> : <Button onClick={startVideo} variant="outlined" startIcon={< LocalSeeIcon />}></Button>
@@ -372,7 +372,7 @@ function FaceApi(props) {
           <>
           </>
       }
-    </div>
+    </>
   );
 }
 
