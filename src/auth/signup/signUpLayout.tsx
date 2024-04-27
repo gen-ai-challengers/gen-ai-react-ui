@@ -71,7 +71,7 @@ export default function SignUpLayout() {
   const [showCustomTheme, setShowCustomTheme] = useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const dispatch = useDispatch();
   const signUpSaved=useSelector(selectSignUpSuccess);
   const toggleColorMode = () => {
@@ -81,7 +81,7 @@ export default function SignUpLayout() {
   const toggleCustomTheme = () => {
     setShowCustomTheme((prev) => !prev);
   }; 
-  useEffect(() => {
+  useEffect(() => { 
     if(signUpSaved){
       setActiveStep(1);
     }
@@ -307,7 +307,20 @@ const redirectToSignUp =()=>{
               </Stack>
             ) : (
               <React.Fragment>
-                {getStepContent(activeStep)}
+                 <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column-reverse', sm: 'row' },
+                    justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
+                    alignItems: 'end',
+                    flexGrow: 1,
+                    gap: 1,
+                    pb: { xs: 12, sm: 0 },
+                    mt: { xs: 2, sm: 0 },
+                    mb: '60px',
+                  }}
+                >
+                {getStepContent(activeStep)}</Box>
                 <Box
                   sx={{
                     display: 'flex',

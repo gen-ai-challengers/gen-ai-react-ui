@@ -1,0 +1,10 @@
+.chat-window{
+    position: fixed;
+    z-index: 1000;
+    right: 0;
+    bottom: 0;
+    height: 25em;
+    /* width: 430px; */
+    opacity: .8;
+    border-radius: 50px;
+}

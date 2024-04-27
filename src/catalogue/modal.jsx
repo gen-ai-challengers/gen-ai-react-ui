@@ -10,7 +10,8 @@ import "@babylonjs/core/Loading/loadingScreen";
 import "@babylonjs/loaders/glTF";
 import "@babylonjs/core/Materials/standardMaterial";
 import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
-import "@babylonjs/core/Animations/animatable"
+import "@babylonjs/core/Animations/animatable";
+import Rating from '@mui/material/Rating';
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -19,6 +20,7 @@ import {
   numberInputClasses,
 } from '@mui/base/Unstable_NumberInput';
 import axios from 'axios';
+import  GenAiChat from '../GenAiChat';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -53,6 +55,7 @@ const NumberInput = React.forwardRef(function CustomNumberInput(
   );
 });
 export default function ModalPreview(props) {
+  const [starValue, setStarValue] = React.useState(4);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -68,50 +71,50 @@ export default function ModalPreview(props) {
     // }
   },[]);
   useEffect(() => {
-    console.log('props', props)
+    // console.log('props', props)
     if (props.product) {
       setSelectedProduct(props.product);
     }
-    // Create Babylon.js engine and scene
-    const engine = new Engine(canvasPreviewRef.current, true, { preserveDrawingBuffer: true, stencil: true });
-    const scene = new Scene(engine);
-    // var axes = new AxesViewer(scene, 2); 
-    scene.onPointerDown = (evt) => {
-      if (evt.button === 0) engine.enterPointerlock();
-      if (evt.button === 1) engine.exitPointerlock();
-    };
+    // // Create Babylon.js engine and scene
+    // const engine = new Engine(canvasPreviewRef.current, true, { preserveDrawingBuffer: true, stencil: true });
+    // const scene = new Scene(engine);
+    // // var axes = new AxesViewer(scene, 2); 
+    // scene.onPointerDown = (evt) => {
+    //   if (evt.button === 0) engine.enterPointerlock();
+    //   if (evt.button === 1) engine.exitPointerlock();
+    // };
 
-    const framesPerSecond = 60;
-    const gravity = -9.81;
-    scene.gravity = new Vector3(0, gravity / framesPerSecond, 0);
-    scene.collisionsEnabled = true;
-    const camera = new FreeCamera('camera1', new Vector3(8, 5, 20), scene);
-    camera.setTarget(Vector3.Zero());
-    camera.attachControl();
-    camera.speed = 0.1;
-    // CreateEnvironment(scene, camera);
-    const light = new HemisphericLight('light1', new Vector3(1, 1, 2), scene);
-    light.intensity = 1;
-    if (selectedProduct) {
-      const bag2 = SceneLoader.ImportMesh(null, "./models/store/", selectedProduct.key + ".glb", scene, function (newMeshes) {
-        newMeshes[0].getChildMeshes()[0].metadata = selectedProduct.key;
-        const importedMesh = newMeshes[0];
-        importedMesh.position.set(selectedProduct.position.x - 2, selectedProduct.position.y - 8, selectedProduct.position.z - 2);
-        importedMesh.rotation.x = selectedProduct.rotation;
-        // importedMesh.scaling = new Vector3(mesh.scaling.x, mesh.scaling.y, mesh.scaling.z);
-        importedMesh.scaling = new Vector3(10, 10, 10);
-        CreateScreenshot(engine, camera, { width: 1024, height: 768 }, function(data) {
-                // data is a base64 encoded image
-          console.log(data);
-              });
-      });
-    }
-    engine.runRenderLoop(() => {
-      scene.render();
-    });
-    return () => {
-      engine.dispose();
-    };
+    // const framesPerSecond = 60;
+    // const gravity = -9.81;
+    // scene.gravity = new Vector3(0, gravity / framesPerSecond, 0);
+    // scene.collisionsEnabled = true;
+    // const camera = new FreeCamera('camera1', new Vector3(8, 5, 20), scene);
+    // camera.setTarget(Vector3.Zero());
+    // camera.attachControl();
+    // camera.speed = 0.1;
+    // // CreateEnvironment(scene, camera);
+    // const light = new HemisphericLight('light1', new Vector3(1, 1, 2), scene);
+    // light.intensity = 1;
+    // if (selectedProduct) {
+    //   const bag2 = SceneLoader.ImportMesh(null, "./models/store/", selectedProduct.key + ".glb", scene, function (newMeshes) {
+    //     newMeshes[0].getChildMeshes()[0].metadata = selectedProduct.key;
+    //     const importedMesh = newMeshes[0];
+    //     importedMesh.position.set(selectedProduct.position.x - 2, selectedProduct.position.y - 8, selectedProduct.position.z - 2);
+    //     importedMesh.rotation.x = selectedProduct.rotation;
+    //     // importedMesh.scaling = new Vector3(mesh.scaling.x, mesh.scaling.y, mesh.scaling.z);
+    //     importedMesh.scaling = new Vector3(10, 10, 10);
+    //     CreateScreenshot(engine, camera, { width: 1024, height: 768 }, function(data) {
+    //             // data is a base64 encoded image
+    //       console.log(data);
+    //           });
+    //   });
+    // }
+    // engine.runRenderLoop(() => {
+    //   scene.render();
+    // });
+    // return () => {
+    //   engine.dispose();
+    // };
   }, [props, selectedProduct]);
   const handleCheckout=()=>{
     navigate('/checkout');
@@ -132,12 +135,20 @@ export default function ModalPreview(props) {
                 gap: 2,
               }}
             >
-              <NumberInput
+              <Rating name="read-only" value={starValue} readOnly />
+              {/* <NumberInput
                 startAdornment={
                   <InputAdornment>
                   </InputAdornment>
                 }
-              />
+              /> */}
+            </Box>
+            <Box   sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+              }}>
+            Indulge in timeless elegance with our Luxury Leather Shoulder Bag, meticulously crafted to complement your style and lifestyle. Handmade by skilled artisans, this bag exudes sophistication and durability, making it a staple accessory for any occasion.
             </Box>
             <Box
               sx={{
@@ -152,7 +163,9 @@ export default function ModalPreview(props) {
           </Grid>
           </Grid>
           <Grid item xs={8}>
-            <canvas ref={canvasPreviewRef} style={{ width: '100%', height: '300px' }} />
+            {/* <img src='blackbag1.png'></img> */}
+            <GenAiChat/>
+            {/* <canvas ref={canvasPreviewRef} style={{ width: '100%', height: '300px' }} /> */}
           </Grid>
         </Grid>
       </Box>

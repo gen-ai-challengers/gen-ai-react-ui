@@ -104,8 +104,8 @@ export default function PaymentForm() {
               {/* <FaceScanner confirmScanAction={addAction} /> */}
               <FaceApi/>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-            </Box>
+            {/* <Box sx={{ display: 'flex', gap: 2 }}>
+            </Box> */}
           </CameraContainer>
         </Box>
       
