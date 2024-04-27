@@ -55,7 +55,7 @@ const NumberInput = React.forwardRef(function CustomNumberInput(
   );
 });
 export default function ModalPreview(props) {
-  const [starValue, setStarValue] = React.useState(2);
+  const [starValue, setStarValue] = React.useState(4);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);

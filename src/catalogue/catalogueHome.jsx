@@ -162,7 +162,7 @@ const CatelogueHome = () => {
         onClose={handleClose}
         slots={{ backdrop: StyledBackdrop }}
       >
-        <ModalContent sx={{ width: 800,height:400 }}>
+        <ModalContent sx={{ width: 900,height:400 }}>
           <ModalPreview product={selectedProduct}/>
         </ModalContent>
       </Modal>
