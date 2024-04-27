@@ -5,6 +5,7 @@ import SignUp from '../auth/signup/signUp';
 import WebcamDemo1 from '../components/FaceScanner';
 import AddFace from "../auth/signup/addFace";
 import SignIn from "../auth/signIn/signIn";
+import LogIn from "../auth/signIn/logIn";
 import ModelTrainer from "../auth/trainer/ModelTrainer";
 import DefaultLayout from "../layout/default/DefaultLayout";
 import Checkout from "../checkout/Checkout";
@@ -23,7 +24,8 @@ import ResponsiveAppBar from '../layout/default/header/ResponsiveAppBar';
 const router = createBrowserRouter([
   { path: '/sign-up', element: <SignUpLayout /> },
   { path: '/ant-media', element: <AntMedia /> },
-  { path: '/', element: <SignIn /> },
+  { path: '/', element: <LogIn /> },  // username password login
+  { path: '/sign-in', element: <SignIn /> },  // face Scan login
   {
     path: '/',
     element: <DefaultLayout />, // Wrap root path with Layout

@@ -348,16 +348,17 @@ function FaceApi(props) {
   //WEB RTC========================
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2px',width: '100%' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '2px',width: '100%',position:'relative' }}>
+        
         {
           captureVideo && modelsLoaded ? <Button onClick={closeWebcam} variant="outlined" startIcon={<NoPhotographyIcon />}>
-          </Button> : <Button onClick={startVideo} variant="outlined" startIcon={< LocalSeeIcon />}></Button>
+          </Button> : <div style={{ display: 'flex', justifyContent: 'center', padding: '65px',position:'relative',border:'1px solid',borderRadius:'12px' }}><Button onClick={startVideo} variant="outlined" startIcon={< LocalSeeIcon />}></Button></div>
         }
-      </div>
+        </div>
       {
         captureVideo ?
           modelsLoaded ?
-            <div>
+            <div >
               <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
                 <video ref={videoRef} height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} style={{ borderRadius: '10px' }} />
                 <canvas ref={canvasRef} style={{ position: 'absolute' }} />

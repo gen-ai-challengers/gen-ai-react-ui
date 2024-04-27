@@ -94,60 +94,16 @@ export default function Checkout() {
       <Grid container sx={{ height: { xs: '100%', sm: '100dvh' } }}>
         <Grid
           item
-          xs={12}
-          sm={5}
-          lg={4}
-          sx={{
-            display: { xs: 'none', md: 'flex' },
-            flexDirection: 'column',
-            backgroundColor: 'background.paper',
-            borderRight: { sm: 'none', md: '1px solid' },
-            borderColor: { sm: 'none', md: 'divider' },
-            alignItems: 'start',
-            pt: 4,
-            px: 10,
-            gap: 4,
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'end',
-              height: 150,
-            }}
-          >
-            <Button
-              startIcon={<ArrowBackRoundedIcon />}
-              component="a"
-              href="/material-ui/getting-started/templates/"
-              sx={{ ml: '-8px' }}
-            >
-              Swift Shop GenAI
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1,
-              width: '100%',
-              maxWidth: 500,
-            }}
-          >
-          </Box>
-        </Grid>
-        <Grid
-          item
           sm={12}
           md={7}
-          lg={8}
+          lg={12}
           sx={{
             display: 'flex',
             flexDirection: 'column',
             maxWidth: '100%',
             width: '100%',
             backgroundColor: { xs: 'transparent', sm: 'background.default' },
-            alignItems: 'start',
+            alignItems: 'center',
             pt: { xs: 2, sm: 4 },
             px: { xs: 2, sm: 10 },
             gap: { xs: 4, md: 8 },
@@ -179,7 +135,7 @@ export default function Checkout() {
                 Back to
                 <SitemarkIcon />
               </Button>
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
             </Box>
             <Box
               sx={{
@@ -191,7 +147,7 @@ export default function Checkout() {
                 height: 150,
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
               <Stepper
                 id="desktop-stepper"
                 activeStep={activeStep}

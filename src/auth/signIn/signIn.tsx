@@ -95,60 +95,20 @@ export default function SignInLayout() {
           item
           sm={12}
           md={7}
-          lg={8}
+          lg={12}
           sx={{
             display: 'flex',
             flexDirection: 'column',
             maxWidth: '100%',
             width: '100%',
             backgroundColor: { xs: 'transparent', sm: 'background.default' },
-            alignItems: 'start',
+            alignItems: 'center',
             pt: { xs: 2, sm: 4 },
             px: { xs: 2, sm: 10 },
             gap: { xs: 4, md: 8 },
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: { sm: 'space-between', md: 'flex-end' },
-              alignItems: 'center',
-              width: '100%',
-              maxWidth: { sm: '100%', md: 600 },
-            }}
-          >
-            <Box
-              sx={{
-                display: { xs: 'flex', md: 'none' },
-                flexDirection: 'row',
-                width: '100%',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Button
-                startIcon={<ArrowBackRoundedIcon />}
-                component="a"
-                href="/material-ui/getting-started/templates/"
-                sx={{ alignSelf: 'start' }}
-              >
-                Back to
-                {/* <SitemarkIcon /> */}
-              </Button>
-              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
-            </Box>
-            <Box
-              sx={{
-                display: { xs: 'none', md: 'flex' },
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                flexGrow: 1,
-                height: 150,
-              }}
-            >
-              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
-            </Box>
-          </Box>
+   
       
           <Box
             sx={{

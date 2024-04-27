@@ -113,14 +113,14 @@ const redirectToSignUp =()=>{
           item
           sm={12}
           md={7}
-          lg={8}
+          lg={12}
           sx={{
             display: 'flex',
             flexDirection: 'column',
             maxWidth: '100%',
             width: '100%',
             backgroundColor: { xs: 'transparent', sm: 'background.default' },
-            alignItems: 'start',
+            alignItems: 'center',
             pt: { xs: 2, sm: 4 },
             px: { xs: 2, sm: 10 },
             gap: { xs: 4, md: 8 },
@@ -164,7 +164,7 @@ const redirectToSignUp =()=>{
                 height: 50,
               }}
             >
-              <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+              {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
               <Stepper
                 id="desktop-stepper"
                 activeStep={activeStep}
@@ -265,7 +265,7 @@ const redirectToSignUp =()=>{
               <React.Fragment>
                  <Box
                   sx={{
-                    display: 'flex',
+                    display: 'block',
                     flexDirection: { xs: 'column-reverse', sm: 'row' },
                     justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
                     alignItems: 'end',
