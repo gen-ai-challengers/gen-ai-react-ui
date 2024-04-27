@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Engine, Scene, FreeCamera, HemisphericLight, Mesh, StandardMaterial, Vector3, Matrix, GUI, AxesViewer,CreateScreenshot } from 'babylonjs';
+import { Engine, Scene, FreeCamera, HemisphericLight,Texture, Mesh,MeshBuilder, StandardMaterial, Vector3, Matrix, GUI, AxesViewer,CreateScreenshot } from 'babylonjs';
 
 import '@babylonjs/loaders'; // Register loaders
 import "@babylonjs/core/Loading/loadingScreen";
@@ -98,7 +98,7 @@ const CatelogueHome = () => {
       const importedMesh = newMeshes[0];
       importedMesh.position.set(-1.8, 0, 0);
       importedMesh.rotation.x = 100;
-      console.log(newMeshes)
+      //console.log(newMeshes)
       scene.onPointerDown = function castRay() {
         var ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera);
         var hit = scene.pickWithRay(ray);
@@ -109,17 +109,28 @@ const CatelogueHome = () => {
       const importedMesh = newMeshes[0];
       importedMesh.position.set(1.8, 0, 0);
       importedMesh.rotation.x = 100;
-      console.log(newMeshes)
+      //console.log(newMeshes)
       scene.onPointerDown = function castRay() {
         var ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera);
         var hit = scene.pickWithRay(ray);
       }
     });
+    // Import the PNG image with error handling
+    var plane = MeshBuilder.CreatePlane("plane", { size: .5 }, scene);
+    plane.rotation.y = Math.PI;
+    plane.position = new Vector3(.5, 1.1, -.9);
+    var material = new StandardMaterial("material", scene);
+
+    material.diffuseTexture = new Texture("./logo-text.png", scene);
+    
+    // Apply the material to the plane
+    plane.material = material;
+
     catalogueMeshes.forEach((mesh) => {
       const bag2 = SceneLoader.ImportMesh(null, "./models/store/", mesh.key + ".glb", scene, function (newMeshes) {
         newMeshes[0].getChildMeshes()[0].metadata = mesh.key;
         // newMeshes[0].metadata=mesh.key;
-        console.log( mesh.key,newMeshes[0])
+        //console.log( mesh.key,newMeshes[0])
         const importedMesh = newMeshes[0];
         importedMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
         importedMesh.rotation.x = mesh.rotation;
@@ -127,12 +138,12 @@ const CatelogueHome = () => {
         scene.onPointerDown = function castRay() {
           var ray = scene.createPickingRay(scene.pointerX, scene.pointerY, Matrix.Identity(), camera);
           var hit = scene.pickWithRay(ray);
-          console.log(hit,newMeshes,mesh.key)
+          //console.log(hit,newMeshes,mesh.key)
           // if (hit.pickedMesh && newMeshes.find((f) => f.id == hit.pickedMesh.id)) {
             if (hit.pickedMesh && hit.pickedMesh.metadata == mesh.key) {
             handleOpen(mesh.key);
             setSelectedProduct(mesh)
-            console.log(hit.pickedMesh);
+            //console.log(hit.pickedMesh);
             return;
           } else {
             handleClose();
