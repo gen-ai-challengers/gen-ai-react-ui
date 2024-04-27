@@ -14,7 +14,7 @@ import WebRTCVideoChat from '../components/webRtcOld';
 import WebRtcAuth from '../components/webRtc';
 import CatelogueHome from '../catalogue/catalogueHome';
 import MediaPipe1 from '../components/mediaPipe1';
-import GenAiChat from '../GenAiChat';
+import GenAiChat from '../chat/GenAiChat';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import ResponsiveAppBar from '../layout/default/header/ResponsiveAppBar';

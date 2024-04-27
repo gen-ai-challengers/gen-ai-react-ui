@@ -20,7 +20,7 @@ import {
   numberInputClasses,
 } from '@mui/base/Unstable_NumberInput';
 import axios from 'axios';
-import  GenAiChat from '../GenAiChat';
+import  GenAiChat from '../chat/GenAiChat';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,

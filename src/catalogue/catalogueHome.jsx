@@ -16,7 +16,7 @@ import MediaPipe1 from '../components/mediaPipe1';
 import ModalPreview from './modal';
 import axios from 'axios';
 import { Box, Grid } from '@mui/material';
-import  GenAiChat from '../GenAiChat';
+import  GenAiChat from '../chat/GenAiChat';
 import './Chat.css';
 const CatelogueHome = () => {
   const canvasRef = useRef(null);
