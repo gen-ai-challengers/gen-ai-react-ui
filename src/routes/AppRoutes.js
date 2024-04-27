@@ -14,6 +14,9 @@ import WebRTCVideoChat from '../components/webRtcOld';
 import WebRtcAuth from '../components/webRtc';
 import CatelogueHome from '../catalogue/catalogueHome';
 import MediaPipe1 from '../components/mediaPipe1';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import ResponsiveAppBar from '../layout/default/header/ResponsiveAppBar';
 // import Contact from './components/Contact';
 // import NotFound from './components/NotFound';
 const router = createBrowserRouter([
@@ -37,7 +40,28 @@ const router = createBrowserRouter([
 ]);
 const AppRoutes = () => {
   return (
+    <Grid container fluid>
+    <Grid item
+      xs={12}>
+      <Box
+      >
+      <ResponsiveAppBar />
+      </Box>
+    </Grid>
+    <Grid
+      item
+      xs={12}
+    >
+      <Box
+        xs={{
+          display: 'flex',
+          alignItems: 'end',
+        }}
+      >
       <RouterProvider router={router} />
+      </Box>
+    </Grid>
+    </Grid>
   );
 }
 

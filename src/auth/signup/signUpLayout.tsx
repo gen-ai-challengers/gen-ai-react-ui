@@ -71,7 +71,7 @@ export default function SignUpLayout() {
   const [showCustomTheme, setShowCustomTheme] = useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
   const dispatch = useDispatch();
   const signUpSaved=useSelector(selectSignUpSuccess);
   const toggleColorMode = () => {
@@ -99,6 +99,9 @@ export default function SignUpLayout() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+  const goToCatalog = () => {
+    navigate('/catalogue');
+  }
 const redirectToSignUp =()=>{
   navigate('/sign-up');
 }
@@ -127,7 +130,7 @@ const redirectToSignUp =()=>{
             sx={{
               display: 'flex',
               alignItems: 'end',
-              height: 150,
+              height: 50,
             }}
           >
             <Button
@@ -185,9 +188,9 @@ const redirectToSignUp =()=>{
               }}
             >
               <Button
+                onClick={goToCatalog}
                 startIcon={<ArrowBackRoundedIcon />}
                 component="a"
-                href="/material-ui/getting-started/templates/"
                 sx={{ alignSelf: 'start' }}
               >
                 Back to
@@ -202,7 +205,7 @@ const redirectToSignUp =()=>{
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
                 flexGrow: 1,
-                height: 150,
+                height: 50,
               }}
             >
               <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
@@ -293,6 +296,7 @@ const redirectToSignUp =()=>{
                 </Typography>
                 <Button
                   variant="contained"
+                  onClick={goToCatalog}
                   sx={{
                     alignSelf: 'start',
                     width: { xs: '100%', sm: 'auto' },
