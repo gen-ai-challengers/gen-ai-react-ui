@@ -118,7 +118,7 @@ const CatelogueHome = () => {
     // Import the PNG image with error handling
     var plane = MeshBuilder.CreatePlane("plane", { size: .5 }, scene);
     plane.rotation.y = Math.PI;
-    plane.position = new Vector3(.5, 1.1, -.9);
+    plane.position = new Vector3(.3, 1.1, -2);
     var material = new StandardMaterial("material", scene);
 
     material.diffuseTexture = new Texture("./logo-text.png", scene);
