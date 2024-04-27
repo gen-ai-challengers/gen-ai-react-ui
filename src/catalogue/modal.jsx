@@ -163,7 +163,7 @@ export default function ModalPreview(props) {
           </Grid>
           </Grid>
           <Grid item xs={8}>
-            <img src='blackbag1.png'></img>
+            {/* <img src='blackbag1.png'></img> */}
             <GenAiChat/>
             {/* <canvas ref={canvasPreviewRef} style={{ width: '100%', height: '300px' }} /> */}
           </Grid>
