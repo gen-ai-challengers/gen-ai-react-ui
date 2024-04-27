@@ -71,7 +71,7 @@ export default function SignUpLayout() {
   const [showCustomTheme, setShowCustomTheme] = useState(true);
   const checkoutTheme = createTheme(getCheckoutTheme(mode));
   const defaultTheme = createTheme({ palette: { mode } });
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
   const dispatch = useDispatch();
   const signUpSaved=useSelector(selectSignUpSuccess);
   const toggleColorMode = () => {
@@ -325,7 +325,7 @@ const redirectToSignUp =()=>{
                   sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column-reverse', sm: 'row' },
-                    justifyContent: activeStep !== 0 ? 'space-between' : 'flex-end',
+                    justifyContent: 'flex-end',
                     alignItems: 'end',
                     flexGrow: 1,
                     gap: 1,
@@ -334,31 +334,6 @@ const redirectToSignUp =()=>{
                     mb: '60px',
                   }}
                 >
-                  {activeStep !== 0 && (
-                    <Button
-                      startIcon={<ChevronLeftRoundedIcon />}
-                      onClick={handleBack}
-                      variant="text"
-                      sx={{
-                        display: { xs: 'none', sm: 'flex' },
-                      }}
-                    >
-                      Previous
-                    </Button>
-                  )}
-                  {activeStep !== 0 && (
-                    <Button
-                      startIcon={<ChevronLeftRoundedIcon />}
-                      onClick={handleBack}
-                      variant="outlined"
-                      fullWidth
-                      sx={{
-                        display: { xs: 'flex', sm: 'none' },
-                      }}
-                    >
-                      Previous
-                    </Button>
-                  )}
                   <Button
                     variant="contained"
                     endIcon={<ChevronRightRoundedIcon />}

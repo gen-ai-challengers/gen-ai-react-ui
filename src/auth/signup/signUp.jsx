@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { useSelector, useDispatch } from 'react-redux';
-import { signUpSuccess, selectUser,SignUpClicked,signUpClicked } from '../authSlice';
+import { signUpSuccess,signUpError, selectUser,SignUpClicked,signUpClicked } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
@@ -50,7 +50,7 @@ export default function SignUp(onSignUp) {
   const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
-  
+    validate();
     setFormData({ ...formData, [event.target.name]: event.target.value });
     console.log(formData)
   };
@@ -61,16 +61,21 @@ export default function SignUp(onSignUp) {
     // if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
     //   newErrors.email = 'Please enter a valid email address';
     // }
-
-    // if (!formData.password || formData.password.length < 6) {
-    //   newErrors.password = 'Password must be at least 6 characters long';
-    // }
+    if (!formData.phone || formData.phone < 10) {
+      newErrors.phone = 'Phone number required';
+    }
+    if (!formData.name || formData.password.name < 3) {
+      newErrors.name = 'User name required';
+    }
+    if (!formData.password || formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
     // dispatch(signUpClicked(false));
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = () => {
-      
+      console.log(validate());
     if (validate()) {
       // Submit form data (e.g., send to server)
       console.log('Form submitted successfully!', formData);
@@ -88,22 +93,32 @@ export default function SignUp(onSignUp) {
                   if (response.data.user) {
                       dispatch(signUpSuccess(response.data.user));
                       console.log(userData);
+                      setFormData({ name: '', password: '',phone: '' });
                       // navigate('/add-face');
                   }
               })
               .catch(function (error) {
-                  // handle error
-                  console.log(error);
+                console.log(error)
+                dispatch(signUpError(true))
+                 let newErrors={};
+                 if(error && error.response && error.response.data){
+                  newErrors.phone = error.response.data.message;
+                 }
+
+                 setErrors(newErrors);
               })
               .finally(function () {
                   // always executed
               });
       }
       catch (e) {
+        dispatch(signUpError(true))
           console.log("error!")
       }
-      setFormData({ name: '', password: '',phone: '' });
       setErrors({});
+    }
+    else{
+      dispatch(signUpClicked(false))
     }
   };
 
@@ -125,6 +140,7 @@ export default function SignUp(onSignUp) {
           required
           onChange={handleChange}
         />
+        <FormHelperText sx={{ color: 'red' }}>{errors.name ? errors.name : ''}</FormHelperText>
       </FormGrid>
       <FormGrid item xs={12} md={6}>
         <FormLabel htmlFor="last-name" required>
@@ -250,6 +266,7 @@ export default function SignUp(onSignUp) {
           required
           onChange={handleChange}
         />
+        <FormHelperText sx={{ color: 'red' }}>{errors.phone ? errors.phone : ''}</FormHelperText>
       </FormGrid>
       <FormGrid item xs={6}>
         <FormLabel htmlFor="zip" required>
@@ -266,7 +283,7 @@ export default function SignUp(onSignUp) {
           required
           onChange={handleChange}
         />
-        <FormHelperText sx={{ color: 'errors.main' }}>{errors.password ? errors.password : ''}</FormHelperText>
+        <FormHelperText sx={{ color: 'red' }}>{errors.password ? errors.password : ''}</FormHelperText>
       </FormGrid>
       <FormGrid item xs={6}>
         <FormLabel htmlFor="country" required>
